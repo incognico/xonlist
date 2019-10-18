@@ -1,0 +1,100 @@
+<div class="container">
+ <div class="row">
+	<div class="one-full column" style="margin: 3.5% 0;margin-right: 1%;">
+	  <h4>[% title %]</h4>
+     <p><strong>[% totalplayers %]</strong> players [% IF totalbots > 0 %](+[% totalbots %] bots) [% END %]are currently playing <a href="https://xonotic.org/">Xonotic</a> on <strong>[% activeservers %]</strong> out of [% totalservers %] publicly listed servers. Last updated: [% lastupdate %] seconds ago.</p>
+     <table class="u-full-width" id="main">
+        <thead>
+           <tr>
+              <th>&#x1F30D;</th>
+              <th>Name</th>
+              <th style ="text-align:center;">Type</th>
+              <th>Map</th>
+              <th>Players</th>
+              <th></th>
+           </tr>
+        </thead>
+        <tbody>
+           [% FOREACH i IN s.server.values.sort('realhostname').reverse.nsort('numplayers').reverse %]
+           [% NEXT IF i.status != 'UP' %]
+           <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] hidden empty[% END %]">
+              <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
+              <td>[% IF i.numplayers > 0 %]<strong>[% i.realhostname %]</strong>[% ELSE %][% i.realhostname %][% END %]</td>
+              <td style="text-align:center;">[% i.mode %]<br><span style="font-size:0.65em;">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
+              <td style="font-size:0.8em;">[% i.map %]</td>
+              <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span style="font-size:0.65em;">/[% i.maxplayers %]</span></td>
+              <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
+           </tr>
+           <tr class="hidden stripe" data-id="[% i.address %]_details">
+              <td colspan="6">
+                  <div class="five columns">
+                     <table class="u-full-width">
+                        <thead>
+                           <tr>
+                              <th>Server Settings</th>
+                              <th></th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <tr>
+                              <td>Address:</td>
+                              <td><strong>[% i.address %]</strong></td>
+                           </tr>
+                           <tr>
+                              <td>Game Version:</td>
+                              <td><strong>[% i.version %]</strong></td>
+                           </tr>
+                           <tr>
+                              <td>Encryption:</td>
+                              <td><strong>[% IF i.enc == 0 %]Not Supported[% ELSIF i.enc == 1 %]Supported[% ELSE %]Required[% END %]</strong></td>
+                           </tr>
+                           <tr>
+                              <td>Player Statistics:</td>
+                              <td><strong>[% IF i.stats == 0 %]Not Supported[% ELSE %]Supported[% END %]</strong></td>
+                           </tr>
+                           <tr>
+                              <td>Impure CVARs:</td>
+                              <td><strong>[% i.impure %]</strong></td>
+                           </tr>
+                           <tr>
+                              <td>Free Slots:</td>
+                              <td><strong>[% i.slots %]</strong></td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+                  <div class="seven columns">
+                     <table class="u-full-width">
+                        <thead>
+                           <tr>
+                              <th>Name</th>
+                              <th>Ping</th>
+                              <th>Score</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           [% IF i.numplayers %]
+                           [% i_sorted = i.teamplay ? i.player.values.nsort('team', 'score').reverse : i.player.values.nsort('score').reverse %]
+                           [% FOREACH p IN i_sorted %]
+                           <tr[% IF i.teamplay %] [% IF p.team == 1 %]style="color: red;"[% ELSIF p.team == 2 %]style="color: blue;"[% ELSIF p.team == 3 %]style="color: yellow;"[% ELSIF p.team == 4 %]style="color: fuchsia;"[% END %][% END %]>
+                              <td>[% p.nick %]</td>
+                              <td style="font-size:0.65em;">[% IF p.ping %][% p.ping %][% ELSE %]bot[% END %]</td>
+                              <td>[% IF p.score == -666 %]spec[% ELSE %][% p.score %][% END %]</td>
+                           </tr>
+                           [% END %]
+                           [% END %]
+                        </tbody>
+                     </table>
+                     [% IF i.numplayers == 0 && i.numbots == 0 %]
+                     <div><p>No Players.</p></div>
+                     [% END %]
+                  </div>
+              </td>
+           </tr>
+           [% END %]
+        </tbody>
+     </table>
+     <p><button class="button kek" data-id="tempty">Show empty servers</button></p>
+	</div>
+ </div>
+</div>

@@ -1,0 +1,4 @@
+  0    0   *   *  *  wget -q https://gitlab.com/xonotic/xonotic/raw/master/misc/infrastructure/checkupdate.txt -O /srv/www/xonotic.lifeisabu
+g.com/files/checkupdate.txt >/dev/null
+  */5  *   *   *  *  /home/nico/.xonotic/xonlist.sh >/dev/null 2>&1
+

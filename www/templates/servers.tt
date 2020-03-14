@@ -76,7 +76,7 @@
                            [% IF i.numplayers %]
                            [% i_sorted = i.teamplay ? i.player.values.nsort('team', 'score').reverse : i.player.values.nsort('score').reverse %]
                            [% FOREACH p IN i_sorted %]
-                           <tr[% IF i.teamplay %] [% IF p.team == 1 %]style="color: red;"[% ELSIF p.team == 2 %]style="color: blue;"[% ELSIF p.team == 3 %]style="color: yellow;"[% ELSIF p.team == 4 %]style="color: fuchsia;"[% END %][% END %]>
+                           <tr[% IF i.teamplay %] [% IF p.team == 1 %]style="color: red;"[% ELSIF p.team == 2 %]style="color: blue;"[% ELSIF p.team == 3 %]style="color: yellow;text-shadow: 0 0 3px black;"[% ELSIF p.team == 4 %]style="color: fuchsia;text-shadow: 0 0 3px black;"[% END %][% END %]>
                               <td>[% p.nick %]</td>
                               <td style="font-size:0.65em;">[% IF p.ping %][% p.ping %][% ELSE %]bot[% END %]</td>
                               <td>[% IF p.score == -666 %]spec[% ELSE %][% p.score %][% END %]</td>

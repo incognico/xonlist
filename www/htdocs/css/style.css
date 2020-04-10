@@ -1,17 +1,19 @@
 @font-face {
   font-family: 'Xolonium';
-  src: url('../fonts/xolonium-regular-latin.eot');
-  src: url('../fonts/xolonium-regular-latin.eot?#iefix') format('embedded-opentype'),
-       url('../fonts/xolonium-regular-latin.woff2') format('woff2'),
-       url('../fonts/xolonium-regular-latin.woff') format('woff'),
-       url('../fonts/xolonium-regular-latin.ttf') format('truetype');
+  src: url('../fonts/xolonium-regular.eot');
+  src: url('../fonts/xolonium-regular.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/xolonium-regular.woff2') format('woff2'),
+       url('../fonts/xolonium-regular.woff') format('woff'),
+       url('../fonts/xolonium-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
   font-size: 1.4em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.2;
   font-weight: 300 !important;
-  font-family: 'Xolonium', sans-serif !important;
+  font-family: Xolonium, sans-serif !important;
   color: #222;
   overflow-y: scroll;
 }

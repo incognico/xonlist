@@ -13,7 +13,7 @@ BEGIN { $begintime = [gettimeofday()]; }
 
 use CGI ':standard';
 use CGI::Carp qw(fatalsToBrowser warningsToBrowser);
-use Encode;
+use Encode::Simple qw(encode_utf8 decode_utf8);
 use HTML::Entities;
 use MaxMind::DB::Reader;
 use Template;
@@ -62,80 +62,99 @@ sub printheader {
    print header(
       -charset => 'utf-8',
    );
+
+   return;
 }
 
-my @text_qfont_table = ( # ripped from DP console.c qfont_table
-    '',   '#',  '#',  '#',  '#',  '.',  '#',  '#',
-    '#',  9,    10,   '#',  ' ',  13,   '.',  '.',
-    '[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
-    '6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
-    ' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
-    '(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
-    '0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
-    '8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
-    '@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
-    'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
-    'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
-    'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
-    '`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
-    'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
-    'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
-    'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<',
-
-    '<',  '=',  '>',  '#',  '#',  '.',  '#',  '#',
-    '#',  '#',  ' ',  '#',  ' ',  '>',  '.',  '.',
-    '[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
-    '6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
-    ' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
-    '(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
-    '0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
-    '8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
-    '@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
-    'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
-    'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
-    'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
-    '`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
-    'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
-    'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
-    'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<'
+my @qfont_unicode_glyphs = (
+   "\N{U+0020}",     "\N{U+0020}",     "\N{U+2014}",     "\N{U+0020}",
+   "\N{U+005F}",     "\N{U+2747}",     "\N{U+2020}",     "\N{U+00B7}",
+   "\N{U+0001F52B}", "\N{U+0020}",     "\N{U+0020}",     "\N{U+25A0}",
+   "\N{U+2022}",     "\N{U+2192}",     "\N{U+2748}",     "\N{U+2748}",
+   "\N{U+005B}",     "\N{U+005D}",     "\N{U+0001F47D}", "\N{U+0001F603}",
+   "\N{U+0001F61E}", "\N{U+0001F635}", "\N{U+0001F615}", "\N{U+0001F60A}",
+   "\N{U+00AB}",     "\N{U+00BB}",     "\N{U+2022}",     "\N{U+203E}",
+   "\N{U+2748}",     "\N{U+25AC}",     "\N{U+25AC}",     "\N{U+25AC}",
+   "\N{U+0020}",     "\N{U+0021}",     "\N{U+0022}",     "\N{U+0023}",
+   "\N{U+0024}",     "\N{U+0025}",     "\N{U+0026}",     "\N{U+0027}",
+   "\N{U+0028}",     "\N{U+0029}",     "\N{U+00D7}",     "\N{U+002B}",
+   "\N{U+002C}",     "\N{U+002D}",     "\N{U+002E}",     "\N{U+002F}",
+   "\N{U+0030}",     "\N{U+0031}",     "\N{U+0032}",     "\N{U+0033}",
+   "\N{U+0034}",     "\N{U+0035}",     "\N{U+0036}",     "\N{U+0037}",
+   "\N{U+0038}",     "\N{U+0039}",     "\N{U+003A}",     "\N{U+003B}",
+   "\N{U+003C}",     "\N{U+003D}",     "\N{U+003E}",     "\N{U+003F}",
+   "\N{U+0040}",     "\N{U+0041}",     "\N{U+0042}",     "\N{U+0043}",
+   "\N{U+0044}",     "\N{U+0045}",     "\N{U+0046}",     "\N{U+0047}",
+   "\N{U+0048}",     "\N{U+0049}",     "\N{U+004A}",     "\N{U+004B}",
+   "\N{U+004C}",     "\N{U+004D}",     "\N{U+004E}",     "\N{U+004F}",
+   "\N{U+0050}",     "\N{U+0051}",     "\N{U+0052}",     "\N{U+0053}",
+   "\N{U+0054}",     "\N{U+0055}",     "\N{U+0056}",     "\N{U+0057}",
+   "\N{U+0058}",     "\N{U+0059}",     "\N{U+005A}",     "\N{U+005B}",
+   "\N{U+005C}",     "\N{U+005D}",     "\N{U+005E}",     "\N{U+005F}",
+   "\N{U+0027}",     "\N{U+0061}",     "\N{U+0062}",     "\N{U+0063}",
+   "\N{U+0064}",     "\N{U+0065}",     "\N{U+0066}",     "\N{U+0067}",
+   "\N{U+0068}",     "\N{U+0069}",     "\N{U+006A}",     "\N{U+006B}",
+   "\N{U+006C}",     "\N{U+006D}",     "\N{U+006E}",     "\N{U+006F}",
+   "\N{U+0070}",     "\N{U+0071}",     "\N{U+0072}",     "\N{U+0073}",
+   "\N{U+0074}",     "\N{U+0075}",     "\N{U+0076}",     "\N{U+0077}",
+   "\N{U+0078}",     "\N{U+0079}",     "\N{U+007A}",     "\N{U+007B}",
+   "\N{U+007C}",     "\N{U+007D}",     "\N{U+007E}",     "\N{U+2190}",
+   "\N{U+003C}",     "\N{U+003D}",     "\N{U+003E}",     "\N{U+0001F680}",
+   "\N{U+00A1}",     "\N{U+004F}",     "\N{U+0055}",     "\N{U+0049}",
+   "\N{U+0043}",     "\N{U+00A9}",     "\N{U+00AE}",     "\N{U+25A0}",
+   "\N{U+00BF}",     "\N{U+25B6}",     "\N{U+2748}",     "\N{U+2748}",
+   "\N{U+2772}",     "\N{U+2773}",     "\N{U+0001F47D}", "\N{U+0001F603}",
+   "\N{U+0001F61E}", "\N{U+0001F635}", "\N{U+0001F615}", "\N{U+0001F60A}",
+   "\N{U+00AB}",     "\N{U+00BB}",     "\N{U+2747}",     "\N{U+0078}",
+   "\N{U+2748}",     "\N{U+2014}",     "\N{U+2014}",     "\N{U+2014}",
+   "\N{U+0020}",     "\N{U+0021}",     "\N{U+0022}",     "\N{U+0023}",
+   "\N{U+0024}",     "\N{U+0025}",     "\N{U+0026}",     "\N{U+0027}",
+   "\N{U+0028}",     "\N{U+0029}",     "\N{U+002A}",     "\N{U+002B}",
+   "\N{U+002C}",     "\N{U+002D}",     "\N{U+002E}",     "\N{U+002F}",
+   "\N{U+0030}",     "\N{U+0031}",     "\N{U+0032}",     "\N{U+0033}",
+   "\N{U+0034}",     "\N{U+0035}",     "\N{U+0036}",     "\N{U+0037}",
+   "\N{U+0038}",     "\N{U+0039}",     "\N{U+003A}",     "\N{U+003B}",
+   "\N{U+003C}",     "\N{U+003D}",     "\N{U+003E}",     "\N{U+003F}",
+   "\N{U+0040}",     "\N{U+0041}",     "\N{U+0042}",     "\N{U+0043}",
+   "\N{U+0044}",     "\N{U+0045}",     "\N{U+0046}",     "\N{U+0047}",
+   "\N{U+0048}",     "\N{U+0049}",     "\N{U+004A}",     "\N{U+004B}",
+   "\N{U+004C}",     "\N{U+004D}",     "\N{U+004E}",     "\N{U+004F}",
+   "\N{U+0050}",     "\N{U+0051}",     "\N{U+0052}",     "\N{U+0053}",
+   "\N{U+0054}",     "\N{U+0055}",     "\N{U+0056}",     "\N{U+0057}",
+   "\N{U+0058}",     "\N{U+0059}",     "\N{U+005A}",     "\N{U+005B}",
+   "\N{U+005C}",     "\N{U+005D}",     "\N{U+005E}",     "\N{U+005F}",
+   "\N{U+0027}",     "\N{U+0041}",     "\N{U+0042}",     "\N{U+0043}",
+   "\N{U+0044}",     "\N{U+0045}",     "\N{U+0046}",     "\N{U+0047}",
+   "\N{U+0048}",     "\N{U+0049}",     "\N{U+004A}",     "\N{U+004B}",
+   "\N{U+004C}",     "\N{U+004D}",     "\N{U+004E}",     "\N{U+004F}",
+   "\N{U+0050}",     "\N{U+0051}",     "\N{U+0052}",     "\N{U+0053}",
+   "\N{U+0054}",     "\N{U+0055}",     "\N{U+0056}",     "\N{U+0057}",
+   "\N{U+0058}",     "\N{U+0059}",     "\N{U+005A}",     "\N{U+007B}",
+   "\N{U+007C}",     "\N{U+007D}",     "\N{U+007E}",     "\N{U+25C0}"
 );
 
-sub text_qfont_table {
-	my ($char) = @_;
-   my $o = ord $char;
+sub qfont_decode {
+    my $qstr = shift // '';
+    my @chars;
 
-   return (($o & 0xFF00) == 0xE000) ? $text_qfont_table[$o & 0xFF] : $char;
-}
+    for (split('', $qstr)) {
+       my $i = ord($_) - 0xE000;
+       my $c = ($_ ge "\N{U+E000}" && $_ le "\N{U+E0FF}")
+          ? $qfont_unicode_glyphs[$i % @qfont_unicode_glyphs]
+          : $_;
+        #printf "<$_:$c|ord:%d>", ord;
+        push @chars, $c if defined $c;
+    }
 
-sub color_dp_transform(&$) {
-	my ($block, $message) = @_;
-	$message =~ s{(?:(\^\^)|\^x([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])|\^([0-9])|(.))(?=([0-9,]?))}{
-		defined $1 ? $block->(char => '^', $7) :
-		defined $2 ? $block->(rgb => [hex $2, hex $3, hex $4], $7) :
-		defined $5 ? $block->(color => $5, $7) :
-		defined $6 ? $block->(char => $6, $7) :
-			return '';
-	}esg;
-
-	return $message;
-}
-
-sub color_dp2none {
-	my ($message) = @_;
-
-	return color_dp_transform {
-		my ($type, $data, $next) = @_;
-		$type eq 'char'
-			? text_qfont_table $data
-			: "";
-	}
-	$message;
+    return join '', @chars;
 }
 
 sub formatnick {
-   my $up = pack 'H*', $_;
+   my $up = pack 'H*', shift // '';
 
-   return encode_entities(Encode::decode_utf8(color_dp2none($up)));
+   $up =~ s/\^(\d|x[\dA-Fa-f]{3})//g;
+
+   return encode_entities(qfont_decode(decode_utf8($up)));
 }
 
 ###
@@ -205,8 +224,8 @@ undef %ban;
 for (keys %{$$xml{server}}) {
    my $key = $_;
 
-   $$xml{server}{$_}{realhostname} = encode_entities(Encode::decode_utf8(pack('H*', $_)));
-   $$xml{server}{$_}{map} = encode_entities(Encode::decode_utf8(pack('H*', $$xml{server}{$_}{map})));
+   $$xml{server}{$_}{realhostname} = encode_entities(decode_utf8(pack('H*', $_)));
+   $$xml{server}{$_}{map} = encode_entities(decode_utf8(pack('H*', $$xml{server}{$_}{map})));
 
    $$xml{server}{$_}{numplayers} -= $$xml{server}{$_}{rule}{bots};
 
@@ -236,8 +255,8 @@ for (keys %{$$xml{server}}) {
 
    delete $$xml{server}{$_}{rule};
 
-   my $record = $gi->record_for_address((split(':', $$xml{server}{$_}{address}))[0]);
-   $$xml{server}{$_}{geo} = $record->{country}{iso_code} ? $record->{country}{iso_code} : '??';
+   my $rec = $gi->record_for_address((split(':', $$xml{server}{$_}{address}))[0]);
+   $$xml{server}{$_}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
    $$xml{server}{$_}{geo} = 'AU' if ($$xml{server}{$_}{realhostname} =~ /australi/i);
 }
 

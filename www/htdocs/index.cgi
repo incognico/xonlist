@@ -30,7 +30,7 @@ my $totalbots     = 0;
 
 my $xmlservers  = '/srv/www/xonotic.lifeisabug.com/files/current.xml';
 my $checkupdate = '/srv/www/xonotic.lifeisabug.com/files/checkupdate.txt';
-my $geodb       = '/usr/share/GeoIP/GeoLite2-City.mmdb';
+my $geodb       = '/home/k/GeoLite2-City.mmdb';
 
 my $ttvars = {
    title => 'Xonotic Server List',
@@ -64,13 +64,78 @@ sub printheader {
    );
 }
 
+my @text_qfont_table = ( # ripped from DP console.c qfont_table
+    '',   '#',  '#',  '#',  '#',  '.',  '#',  '#',
+    '#',  9,    10,   '#',  ' ',  13,   '.',  '.',
+    '[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
+    '6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
+    ' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
+    '(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
+    '0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
+    '8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
+    '@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
+    'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
+    'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
+    'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
+    '`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
+    'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
+    'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
+    'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<',
+
+    '<',  '=',  '>',  '#',  '#',  '.',  '#',  '#',
+    '#',  '#',  ' ',  '#',  ' ',  '>',  '.',  '.',
+    '[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
+    '6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
+    ' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
+    '(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
+    '0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
+    '8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
+    '@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
+    'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
+    'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
+    'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
+    '`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
+    'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
+    'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
+    'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<'
+);
+
+sub text_qfont_table {
+	my ($char) = @_;
+   my $o = ord $char;
+
+   return (($o & 0xFF00) == 0xE000) ? $text_qfont_table[$o & 0xFF] : $char;
+}
+
+sub color_dp_transform(&$) {
+	my ($block, $message) = @_;
+	$message =~ s{(?:(\^\^)|\^x([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])|\^([0-9])|(.))(?=([0-9,]?))}{
+		defined $1 ? $block->(char => '^', $7) :
+		defined $2 ? $block->(rgb => [hex $2, hex $3, hex $4], $7) :
+		defined $5 ? $block->(color => $5, $7) :
+		defined $6 ? $block->(char => $6, $7) :
+			return '';
+	}esg;
+
+	return $message;
+}
+
+sub color_dp2none {
+	my ($message) = @_;
+
+	return color_dp_transform {
+		my ($type, $data, $next) = @_;
+		$type eq 'char'
+			? text_qfont_table $data
+			: "";
+	}
+	$message;
+}
+
 sub formatnick {
    my $up = pack 'H*', $_;
 
-   $up =~ s/\^x...//g;
-   $up =~ s/\^[0-9]//g;
-
-   return encode_entities(Encode::decode_utf8($up));
+   return encode_entities(Encode::decode_utf8(color_dp2none($up)));
 }
 
 ###

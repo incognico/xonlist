@@ -19,9 +19,6 @@
    <!-- Favicon -->
    <link rel="icon" href="[% url %]/images/favicon.png" type="image/png">
 
-   <!-- JQ -->
-   <script src="[% url %]/js/jquery-3.5.0.slim.min.js"></script>
-
    <!-- Title -->
    <title>[% title %]</title>
 </head>

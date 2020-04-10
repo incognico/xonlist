@@ -1,5 +1,6 @@
 <!-- page generation took [% measure(begintime) %] seconds -->
-<script src="[% url %]/js/main.js"></script>
+<script defer src="[% url %]/js/jquery-3.5.0.slim.min.js"></script>
+<script defer src="[% url %]/js/main.js"></script>
 <img src="[% url %]/images/erebus.png" id="erebus" alt="erebus">
 <div class=".u-cf"></div>
 </body>

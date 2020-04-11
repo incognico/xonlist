@@ -16,6 +16,9 @@
    <link rel="stylesheet" href="[% url %]/css/style.css">
    <link rel="stylesheet" href="[% url %]/css/flags.css">
 
+   <!-- JS -->
+   <script src="[% url %]/js/jquery-3.5.0.slim.min.js"></script>
+
    <!-- Favicon -->
    <link rel="icon" href="[% url %]/images/favicon.png" type="image/png">
 

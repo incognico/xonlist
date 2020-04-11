@@ -13,9 +13,9 @@ clipboard.on('success', function(e) {
   var ele = e.trigger;
   e.clearSelection();
   clearTimeout();
-  ele.innerHTML = '&#x2714;';
   ele.blur();
-  setTimeout(revert, 5000, ele);
+  ele.innerHTML = '&#x2714;&#xfe0f;';
+  setTimeout(revert, 6000, ele);
 });
 
 function revert(ele) {

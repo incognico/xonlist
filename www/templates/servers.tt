@@ -2,7 +2,7 @@
  <div class="row">
 	<div class="one-full column" style="margin: 3.5% 0;margin-right: 1%;">
 	  <h4>[% title %]</h4>
-     <p><strong>[% totalplayers %]</strong> players [% IF totalbots > 0 %](+[% totalbots %] bots) [% END %]are currently playing <a href="https://xonotic.org/">Xonotic</a> on <strong>[% activeservers %]</strong> out of [% totalservers %] publicly listed servers. Last updated: [% lastupdate %] seconds ago.</p>
+     <p><strong>[% totalplayers %]</strong> players [% IF totalbots > 0 %](+[% totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <strong>[% activeservers %]</strong> out of [% totalservers %] publicly listed servers. Last updated: [% lastupdate %] seconds ago.</p>
      <table class="u-full-width" id="main">
         <thead>
            <tr>

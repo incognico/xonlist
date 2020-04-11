@@ -9,10 +9,10 @@
    <meta name="description" content="[% title %]">
    <meta name="viewport" content="width=device-width, initial-scale=0.4">
    <meta name="theme-color" content="#222">
-   <meta name="application-name" content="XonList" />
-   <meta name="msapplication-tooltip" content="Xonotic Server List." />
-   <meta name="msapplication-starturl" content="[% url %]/" />
-   <link rel="manifest" href="[% url %]/manifest.json" />
+   <meta name="application-name" content="XonList">
+   <meta name="msapplication-tooltip" content="Xonotic Server List.">
+   <meta name="msapplication-starturl" content="[% url %]/">
+   <link rel="manifest" href="[% url %]/manifest.json">
 
 
    <!-- CSS -->
@@ -21,7 +21,7 @@
    <link rel="stylesheet" href="[% url %]/css/style.css">
    <link rel="stylesheet" href="[% url %]/css/flags.css">
 
-   <!-- JS -->
+   <!-- JQ -->
    <script src="[% url %]/js/jquery-3.5.0.slim.min.js"></script>
 
    <!-- Icons -->

@@ -12,6 +12,7 @@
               <th>Map</th>
               <th>Players</th>
               <th></th>
+              <th></th>
            </tr>
         </thead>
         <tbody>
@@ -23,10 +24,11 @@
               <td style="text-align:center;">[% i.mode %]<br><span style="font-size:0.65em;">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
               <td style="font-size:0.8em;">[% i.map %]</td>
               <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span style="font-size:0.65em;">/[% i.maxplayers %]</span></td>
+              <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %]" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
               <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
            </tr>
            <tr class="hidden stripe" data-id="[% i.address %]_details">
-              <td colspan="6">
+              <td colspan="7">
                   <div class="five columns">
                      <table class="u-full-width">
                         <thead>

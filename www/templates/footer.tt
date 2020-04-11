@@ -1,10 +1,14 @@
 <!-- page generation took [% measure(begintime) %] seconds -->
-<script src="[% url %]/js/main.js"></script>
+<! --- JS -->
+<script src="[% url %]/js/clipboard.min.js"></script>
 <script>
-   if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js');
-   }
+  var clipboard = new ClipboardJS('.clipboard');
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js');
+  }
 </script>
+<script src="[% url %]/js/main.js"></script>
 <img src="[% url %]/images/erebus.png" id="erebus" alt="erebus">
 <div class=".u-cf"></div>
 </body>

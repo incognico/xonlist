@@ -1,5 +1,10 @@
 <!-- page generation took [% measure(begintime) %] seconds -->
 <script src="[% url %]/js/main.js"></script>
+<script>
+   if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js');
+   }
+</script>
 <img src="[% url %]/images/erebus.png" id="erebus" alt="erebus">
 <div class=".u-cf"></div>
 </body>

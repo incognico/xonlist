@@ -11,7 +11,7 @@ use Time::HiRes qw(gettimeofday tv_interval);
 my $begintime;
 BEGIN { $begintime = [gettimeofday()]; }
 
-use CGI ':standard';
+use CGI qw(header param -utf8);
 use CGI::Carp qw(fatalsToBrowser warningsToBrowser);
 use Encode::Simple qw(encode_utf8 decode_utf8);
 use HTML::Entities;
@@ -19,14 +19,9 @@ use MaxMind::DB::Reader;
 use Template;
 use File::Slurper 'read_text';
 use XML::Fast;
+use JSON;
 
 my $debug = 0;
-
-my @banned;
-my $totalplayers  = 0;
-my $totalservers  = 0;
-my $activeservers = 0;
-my $totalbots     = 0;
 
 my $xmlservers  = '/srv/www/xonotic.lifeisabug.com/files/current.xml';
 my $checkupdate = '/srv/www/xonotic.lifeisabug.com/files/checkupdate.txt';
@@ -47,6 +42,8 @@ croak("template folder $ttopts{INCLUDE_PATH} does not exist") unless (-e $ttopts
 
 my $tt = Template->new(\%ttopts);
 
+###
+
 sub measure {
    my $time = shift || $begintime;
 
@@ -54,6 +51,8 @@ sub measure {
 }
 
 sub printheader {
+   my $type = shift || 'text/html';
+
    if ($debug) {
       use Data::Dumper;
       $$ttvars{debug} = Dumper($ttvars);
@@ -61,6 +60,7 @@ sub printheader {
 
    print header(
       -charset => 'utf-8',
+      -type    => $type
    );
 
    return;
@@ -159,8 +159,10 @@ sub formatnick {
 
 ###
 
-my $xmlfile = read_text($xmlservers);
-my $xmlin = xml2hash($xmlfile, attr => '', text => 'val');
+my @banned;
+
+my $qdest = param('dest') || 'index';
+my $xmlin = xml2hash(read_text($xmlservers), attr => '', text => 'val');
 
 open(my $fh, "<", $checkupdate)
    or croak("Can't open update file: $!");
@@ -181,7 +183,9 @@ for (@{$$xmlin{qstat}{server}}) {
 
    next unless defined $name; 
 
-   $$xml{server}{$name} = $_;
+   $$xml{server}{$name} = $_ unless ($$xml{server}{$name}{address} ~~ @banned);
+
+   delete $$xml{server}{$name}{name};
 
    for (@{$$xml{server}{$name}{rules}{rule}}) {
        $$xml{server}{$name}{rule}{$_->{name}} = $_->{val};
@@ -189,7 +193,10 @@ for (@{$$xmlin{qstat}{server}}) {
 
    delete $$xml{server}{$name}{rules};
 
-   next unless $$xml{server}{$name}{players};
+   unless ($$xml{server}{$name}{players}) {
+      delete $$xml{server}{$name}{players};
+      next;
+   }
 
    if (ref($$xml{server}{$name}{players}{player}) eq 'ARRAY') {
       for (@{$$xml{server}{$name}{players}{player}}) {
@@ -206,58 +213,47 @@ for (@{$$xmlin{qstat}{server}}) {
    delete $$xml{server}{$name}{players};
 }
 
-my %ban;
+my $totalplayers  = 0;
+my $totalservers  = 0;
+my $activeservers = 0;
+my $totalbots     = 0;
 
-for (keys %{$$xml{server}}) {
-   my $key = $_;
+for my $key (keys %{$$xml{server}}) {
+   $$xml{server}{$key}{realhostname} = encode_entities(decode_utf8(pack('H*', $key)));
+   $$xml{server}{$key}{map} = encode_entities(decode_utf8(pack('H*', $$xml{server}{$key}{map})));
 
-   for (@banned) {
-      if ($$xml{server}{$key}{address} =~ /\Q$_\E/) {
-         $ban{$key}++;
-      }
-   }
-}
+   $$xml{server}{$key}{numplayers} -= $$xml{server}{$key}{rule}{bots};
 
-delete @{$$xml{server}}{keys %ban};
-undef %ban;
-
-for (keys %{$$xml{server}}) {
-   my $key = $_;
-
-   $$xml{server}{$_}{realhostname} = encode_entities(decode_utf8(pack('H*', $_)));
-   $$xml{server}{$_}{map} = encode_entities(decode_utf8(pack('H*', $$xml{server}{$_}{map})));
-
-   $$xml{server}{$_}{numplayers} -= $$xml{server}{$_}{rule}{bots};
-
-   for (keys %{$$xml{server}{$_}{player}}) {
+   for (keys %{$$xml{server}{$key}{player}}) {
       $$xml{server}{$key}{player}{$_}{nick} = formatnick($_);
+      delete $$xml{server}{$key}{player}{$_}{name};
    }
 
-   ($$xml{server}{$_}{enc}, $$xml{server}{$_}{d0id}) = defined $$xml{server}{$_}{rule}{d0_blind_id} ? split(' ', $$xml{server}{$_}{rule}{d0_blind_id}) : '-';
+   ($$xml{server}{$key}{enc}, $$xml{server}{$key}{d0id}) = defined $$xml{server}{$key}{rule}{d0_blind_id} ? split(' ', $$xml{server}{$key}{rule}{d0_blind_id}) : '-';
 
-   my ($mode, $ver, $impure, $slots, $flags, $mode2) = split(':', $$xml{server}{$_}{rule}{qcstatus});
-   $$xml{server}{$_}{version}   = $ver;
-   $$xml{server}{$_}{impure}    = substr($impure, 1);
-   $$xml{server}{$_}{slots}     = substr($slots, 1);
-   #$$xml{server}{$_}{mode}      = uc($mode) eq 'DM' && $$xml{server}{$_}{rule}{hostname} =~ /duel/i ? 'DUEL' : uc($mode);
-   $$xml{server}{$_}{mode}      = uc($mode) eq 'DM' && $$xml{server}{$_}{slots} + $$xml{server}{$_}{numplayers} - $$xml{server}{$_}{numspectators} == 2 ? 'DUEL' : uc($mode);
-   $$xml{server}{$_}{fballowed} = substr($flags, 1) & 1 ? 1 : 0;
-   $$xml{server}{$_}{teamplay}  = substr($flags, 1) & 2 ? 1 : 0;
-   $$xml{server}{$_}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
-   $$xml{server}{$_}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
+   my ($mode, $ver, $impure, $slots, $flags, $mode2) = split(':', $$xml{server}{$key}{rule}{qcstatus});
+   $$xml{server}{$key}{version}   = $ver;
+   $$xml{server}{$key}{impure}    = substr($impure, 1);
+   $$xml{server}{$key}{slots}     = substr($slots, 1);
+   #$$xml{server}{$key}{mode}      = uc($mode) eq 'DM' && $$xml{server}{$key}{rule}{realhostname} =~ /duel/i ? 'DUEL' : uc($mode);
+   $$xml{server}{$key}{mode}      = uc($mode) eq 'DM' && $$xml{server}{$key}{slots} + $$xml{server}{$key}{numplayers} - $$xml{server}{$key}{numspectators} == 2 ? 'DUEL' : uc($mode);
+   $$xml{server}{$key}{fballowed} = substr($flags, 1) & 1 ? 1 : 0;
+   $$xml{server}{$key}{teamplay}  = substr($flags, 1) & 2 ? 1 : 0;
+   $$xml{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
+   $$xml{server}{$key}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
    
-   $$xml{server}{$_}{numbots}   = $$xml{server}{$_}{rule}{bots};
+   $$xml{server}{$key}{numbots}   = $$xml{server}{$key}{rule}{bots};
 
-   $activeservers++ if ($$xml{server}{$_}{numplayers} > 0); 
+   $activeservers++ if ($$xml{server}{$key}{numplayers} > 0); 
    $totalservers ++;
-   $totalplayers += $$xml{server}{$_}{numplayers};
-   $totalbots    += $$xml{server}{$_}{rule}{bots};
+   $totalplayers += $$xml{server}{$key}{numplayers};
+   $totalbots    += $$xml{server}{$key}{rule}{bots};
 
-   delete $$xml{server}{$_}{rule};
+   delete $$xml{server}{$key}{rule};
 
-   my $rec = $gi->record_for_address((split(':', $$xml{server}{$_}{address}))[0]);
-   $$xml{server}{$_}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
-   $$xml{server}{$_}{geo} = 'AU' if ($$xml{server}{$_}{realhostname} =~ /australi/i);
+   my $rec = $gi->record_for_address((split(':', $$xml{server}{$key}{address}))[0]);
+   $$xml{server}{$key}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
+   $$xml{server}{$key}{geo} = 'AU' if ($$xml{server}{$key}{realhostname} =~ /australi[as]/i); # shitty workaround
 }
 
 $$ttvars{lastupdate}    = time - (stat($xmlservers))[9];
@@ -266,10 +262,32 @@ $$ttvars{totalservers}  = $totalservers;
 $$ttvars{totalplayers}  = $totalplayers;
 $$ttvars{totalbots}     = $totalbots;
 
-$$ttvars{s} = $xml;
+$$ttvars{measure} = \&measure;
 
 ###
 
-$$ttvars{measure} = \&measure;
-printheader();
-$tt->process('serverlist.tt', $ttvars) || croak($tt->error);
+given ($qdest) {
+   when('json') { page_json(); }
+   default      { page_index(); }
+}
+
+sub page_index {
+   $$ttvars{s} = $xml;
+   printheader();
+   $tt->process('serverlist.tt', $ttvars) || croak($tt->error);
+}
+
+sub page_json {
+   $$xml{info}{lastupdate}    = time - (stat($xmlservers))[9];
+   $$xml{info}{activeservers} = $activeservers;
+   $$xml{info}{totalservers}  = $totalservers;
+   $$xml{info}{totalplayers}  = $totalplayers;
+   $$xml{info}{totalbots}     = $totalbots;
+
+   $$xml{info}{measure} = measure($begintime);
+
+   $$ttvars{json} = to_json($xml, { utf8 => 1, pretty => 1 });
+
+   printheader('application/json');
+   $tt->process('json.tt', $ttvars) || croak($tt->error);
+}

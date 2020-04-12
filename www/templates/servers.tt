@@ -2,7 +2,8 @@
  <div class="row">
 	<div class="one-full column" style="margin: 3.5% 0;margin-right: 1%;">
 	  <h4>[% title %]</h4>
-     <p><strong>[% totalplayers %]</strong> players [% IF totalbots > 0 %](+[% totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <strong>[% activeservers %]</strong> out of [% totalservers %] publicly listed servers. Last updated: [% lastupdate %] seconds ago.</p>
+     <p><strong>[% totalplayers %]</strong> players [% IF totalbots > 0 %](+[% totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <strong>[% activeservers %]</strong> out of [% totalservers %] publicly listed servers. Last <a href="[% url %]" title="Refresh the list">update</a>d: [% lastupdate %] sec. ago.</p>
+     <input id="filter" type="search" placeholder="Filter by: Name, Type or Map. Example: insta">
      <table class="u-full-width" id="main">
         <thead>
            <tr>
@@ -18,7 +19,7 @@
         <tbody>
            [% FOREACH i IN s.server.values.sort('realhostname').reverse.nsort('numplayers').reverse %]
            [% NEXT IF i.status != 'UP' %]
-           <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] hidden empty[% END %]">
+           <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] hidden empty[% END %] info">
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
               <td>[% IF i.numplayers > 0 %]<strong>[% i.realhostname %]</strong>[% ELSE %][% i.realhostname %][% END %]</td>
               <td style="text-align:center;">[% i.mode %]<br><span style="font-size:0.65em;">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
@@ -27,7 +28,7 @@
               <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %]" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
               <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
            </tr>
-           <tr class="hidden stripe" data-id="[% i.address %]_details">
+           <tr class="hidden stripe details" data-id="[% i.address %]_details">
               <td colspan="7">
                   <div class="five columns">
                      <table class="u-full-width">

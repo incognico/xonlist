@@ -32,6 +32,14 @@ body {
   min-width: 24px;
 }
 
+a {
+  text-decoration: none;
+}
+
+input[type=search] {
+  width: 100%;
+}
+
 th:first-child,
 td:first-child {
   padding-left: 3px;
@@ -86,5 +94,9 @@ tr.yes, tr.fus {
 
   .button, input[type="button"] {
     color: #aaa;
+  }
+
+  input[type=search] {
+    background-color: #222;
   }
 }

@@ -47,13 +47,17 @@
                               <td>Game Version:</td>
                               <td><strong>[% i.version %]</strong></td>
                            </tr>
-                           <tr>
+                           <tr title="[% i.d0id %]">
                               <td>Encryption:</td>
-                              <td><strong>[% IF i.enc == 0 %]Not Supported[% ELSIF i.enc == 1 %]Supported[% ELSE %]Required[% END %]</strong></td>
+                              <td><strong>[% IF i.enc == 2 %]Required[% ELSIF i.enc == 1 %]Supported[% ELSE %]Not Supported[% END %]</strong></td>
                            </tr>
                            <tr>
                               <td>Player Statistics:</td>
                               <td><strong>[% IF i.stats == 0 %]Not Supported[% ELSE %]Supported[% END %]</strong></td>
+                           </tr>
+                           <tr>
+                              <td>Fullbright Models:</td>
+                              <td><strong>[% IF i.fballowed == 0 %]Forbidden[% ELSE %]Allowed[% END %]</strong></td>
                            </tr>
                            <tr>
                               <td>Impure CVARs:</td>

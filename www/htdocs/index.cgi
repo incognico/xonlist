@@ -185,7 +185,7 @@ for (@{$$xmlin{qstat}{server}}) {
 
    $$xml{server}{$name} = $_ unless ($$xml{server}{$name}{address} ~~ @banned);
 
-   delete $$xml{server}{$name}{name};
+   delete $$xml{server}{$name}{$_} for qw(name type retries);
 
    for (@{$$xml{server}{$name}{rules}{rule}}) {
        $$xml{server}{$name}{rule}{$_->{name}} = $_->{val};
@@ -229,7 +229,7 @@ for my $key (keys %{$$xml{server}}) {
       delete $$xml{server}{$key}{player}{$_}{name};
    }
 
-   ($$xml{server}{$key}{enc}, $$xml{server}{$key}{d0id}) = defined $$xml{server}{$key}{rule}{d0_blind_id} ? split(' ', $$xml{server}{$key}{rule}{d0_blind_id}) : '-';
+   ($$xml{server}{$key}{enc}, $$xml{server}{$key}{d0id}) = (defined $$xml{server}{$key}{rule}{d0_blind_id} ? split(' ', $$xml{server}{$key}{rule}{d0_blind_id}) : 0, 0);
 
    my ($mode, $ver, $impure, $slots, $flags, $mode2) = split(':', $$xml{server}{$key}{rule}{qcstatus});
    $$xml{server}{$key}{version}   = $ver;
@@ -241,7 +241,7 @@ for my $key (keys %{$$xml{server}}) {
    $$xml{server}{$key}{teamplay}  = substr($flags, 1) & 2 ? 1 : 0;
    $$xml{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
    $$xml{server}{$key}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
-   
+
    $$xml{server}{$key}{numbots}   = $$xml{server}{$key}{rule}{bots};
 
    $activeservers++ if ($$xml{server}{$key}{numplayers} > 0); 

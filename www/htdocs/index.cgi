@@ -50,11 +50,12 @@ sub measure {
    return tv_interval($time);
 }
 
-sub printheader {
+sub process {
+   my $tmpl = shift || 'serverlist';
    my $type = shift || 'text/html';
 
    if ($debug) {
-      use Data::Dumper;
+      require Data::Dumper;
       $$ttvars{debug} = Dumper($ttvars);
    }
 
@@ -62,6 +63,8 @@ sub printheader {
       -charset => 'utf-8',
       -type    => $type
    );
+
+   $tt->process($tmpl.'.tt', $ttvars) || croak($tt->error);
 
    return;
 }
@@ -161,7 +164,9 @@ sub formatnick {
 
 my @banned;
 
-my $qdest = param('dest') || 'index';
+my $qdest   = param('dest')   || 'index';
+my $qpretty = param('pretty') || 0;
+
 my $xmlin = xml2hash(read_text($xmlservers), attr => '', text => 'val');
 
 open(my $fh, "<", $checkupdate)
@@ -185,7 +190,7 @@ for (@{$$xmlin{qstat}{server}}) {
 
    $$xml{server}{$name} = $_ unless ($$xml{server}{$name}{address} ~~ @banned);
 
-   delete $$xml{server}{$name}{$_} for qw(name type retries);
+   delete $$xml{server}{$name}{$_} for qw(hostname name retries type);
 
    for (@{$$xml{server}{$name}{rules}{rule}}) {
        $$xml{server}{$name}{rule}{$_->{name}} = $_->{val};
@@ -273,21 +278,32 @@ given ($qdest) {
 
 sub page_index {
    $$ttvars{s} = $xml;
-   printheader();
-   $tt->process('serverlist.tt', $ttvars) || croak($tt->error);
+
+   process('serverlist');
+
+   return;
 }
 
 sub page_json {
-   $$xml{info}{lastupdate}    = time - (stat($xmlservers))[9];
-   $$xml{info}{activeservers} = $activeservers;
-   $$xml{info}{totalservers}  = $totalservers;
-   $$xml{info}{totalplayers}  = $totalplayers;
-   $$xml{info}{totalbots}     = $totalbots;
+   my $fstat = (stat($xmlservers))[9];
+
+   $$xml{info}{lastupdateepoch} = $fstat;
+   $$xml{info}{lastupdate}      = time - $fstat;
+   $$xml{info}{activeservers}   = $activeservers;
+   $$xml{info}{totalservers}    = $totalservers;
+   $$xml{info}{totalplayers}    = $totalplayers;
+   $$xml{info}{totalbots}       = $totalbots;
 
    $$xml{info}{measure} = measure($begintime);
 
-   $$ttvars{json} = to_json($xml, { utf8 => 1, pretty => 1 });
+   if ($qpretty) {
+      $$ttvars{json} = to_json($xml, { utf8 => 1, pretty => 1 });
+   }
+   else {
+      $$ttvars{json} = encode_json($xml);
+   }
 
-   printheader('application/json');
-   $tt->process('json.tt', $ttvars) || croak($tt->error);
+   process('json', 'application/json');
+
+   return;
 }

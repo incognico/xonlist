@@ -185,16 +185,17 @@ my $gi = MaxMind::DB::Reader->new(file => $geodb);
 my $xml;
 
 for (@{$$xmlin{qstat}{server}}) {
-   my $key = $_->{hostname};
+   next unless $$_{hostname};
+   next unless $$_{status} eq 'UP';
 
-   next unless $key; 
+   my $key = $$_{hostname};
 
    $$xml{server}{$key} = $_ unless ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
 
    delete $$xml{server}{$key}{$_} for qw(hostname retries type);
 
    for (@{$$xml{server}{$key}{rules}{rule}}) {
-       $$xml{server}{$key}{rule}{$_->{name}} = $$_{val};
+       $$xml{server}{$key}{rule}{$$_{name}} = $$_{val};
    }
 
    delete $$xml{server}{$key}{rules};

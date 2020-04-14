@@ -2,7 +2,7 @@
  <div class="row">
 	<div class="one-full column" style="margin: 3.5% 0;margin-right: 1%;">
 	  <h4>[% title %]</h4>
-     <p><strong>[% totalplayers %]</strong> players [% IF totalbots > 0 %](+[% totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <strong>[% activeservers %]</strong> out of [% totalservers %] publicly listed servers. Last <a href="[% url %]" title="Refresh the list">update</a>d: [% lastupdate %] sec. ago.</p>
+     <p><strong>[% s.info.totalplayers %]</strong> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <strong>[% s.info.activeservers %]</strong> out of [% s.info.totalservers %] publicly listed servers. Last <a href="[% url %]" title="Refresh the list">update</a>d: [% s.info.lastupdate %] sec. ago.</p>
      <input id="filter" type="search" placeholder="(WIP!) Filter by anything&hellip;">
      <table class="u-full-width" id="main">
         <thead>
@@ -17,11 +17,11 @@
            </tr>
         </thead>
         <tbody>
-           [% FOREACH i IN s.server.values.sort('realhostname').reverse.nsort('numplayers').reverse %]
+           [% FOREACH i IN s.server.values.sort('realname').reverse.nsort('numplayers').reverse %]
            [% NEXT IF i.status != 'UP' %]
            <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] hidden empty[% END %] info">
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
-              <td>[% IF i.numplayers > 0 %]<strong>[% i.realhostname %]</strong>[% ELSE %][% i.realhostname %][% END %]</td>
+              <td>[% IF i.numplayers > 0 %]<strong>[% i.realname %]</strong>[% ELSE %][% i.realname %][% END %]</td>
               <td style="text-align:center;">[% i.mode %]<br><span style="font-size:0.65em;">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
               <td style="font-size:0.8em;">[% i.map %]</td>
               <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span style="font-size:0.65em;">/[% i.maxplayers %]</span></td>

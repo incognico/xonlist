@@ -56,6 +56,7 @@ sub process {
 
    if ($debug) {
       require Data::Dumper;
+      Data::Dumper->import;
       $$ttvars{debug} = Dumper($ttvars);
    }
 
@@ -184,38 +185,39 @@ my $gi = MaxMind::DB::Reader->new(file => $geodb);
 my $xml;
 
 for (@{$$xmlin{qstat}{server}}) {
-   my $name = $_->{name};
+   my $key = $_->{hostname};
 
-   next unless defined $name; 
+   next unless $key; 
 
-   $$xml{server}{$name} = $_ unless ($$xml{server}{$name}{address} ~~ @banned);
+   $$xml{server}{$key} = $_ unless ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
 
-   delete $$xml{server}{$name}{$_} for qw(hostname name retries type);
+   delete $$xml{server}{$key}{$_} for qw(hostname retries type);
 
-   for (@{$$xml{server}{$name}{rules}{rule}}) {
-       $$xml{server}{$name}{rule}{$_->{name}} = $_->{val};
+   for (@{$$xml{server}{$key}{rules}{rule}}) {
+       $$xml{server}{$key}{rule}{$_->{name}} = $$_{val};
    }
 
-   delete $$xml{server}{$name}{rules};
+   delete $$xml{server}{$key}{rules};
 
-   unless ($$xml{server}{$name}{players}) {
-      delete $$xml{server}{$name}{players};
+   unless ($$xml{server}{$key}{players}) {
+      delete $$xml{server}{$key}{players};
       next;
    }
 
-   if (ref($$xml{server}{$name}{players}{player}) eq 'ARRAY') {
-      for (@{$$xml{server}{$name}{players}{player}}) {
-         $$xml{server}{$name}{player}{$_->{name}} = $_;
+   if (ref($$xml{server}{$key}{players}{player}) eq 'ARRAY') {
+      for (@{$$xml{server}{$key}{players}{player}}) {
+         $$xml{server}{$key}{player}{$$_{name}} = $_;
       }
    }
-   elsif (ref($$xml{server}{$name}{players}{player}) eq 'HASH') {
-      $$xml{server}{$name}{player}{$$xml{server}{$name}{players}{player}{name}}{name}  = $$xml{server}{$name}{players}{player}{name}  if exists $$xml{server}{$name}{players}{player}{name};
-      $$xml{server}{$name}{player}{$$xml{server}{$name}{players}{player}{name}}{score} = $$xml{server}{$name}{players}{player}{score} if exists $$xml{server}{$name}{players}{player}{score};
-      $$xml{server}{$name}{player}{$$xml{server}{$name}{players}{player}{name}}{ping}  = $$xml{server}{$name}{players}{player}{ping}  if exists $$xml{server}{$name}{players}{player}{ping};
-      $$xml{server}{$name}{player}{$$xml{server}{$name}{players}{player}{name}}{team}  = exists $$xml{server}{$name}{players}{player}{team} ? $$xml{server}{$name}{players}{player}{team} : 0;
+   elsif (ref($$xml{server}{$key}{players}{player}) eq 'HASH') {
+      $$xml{server}{$key}{player}{$$xml{server}{$key}{players}{player}{name}}{name}  = exists $$xml{server}{$key}{players}{player}{name}  ? $$xml{server}{$key}{players}{player}{name}  : 'unconnected';
+      $$xml{server}{$key}{player}{$$xml{server}{$key}{players}{player}{name}}{score} = exists $$xml{server}{$key}{players}{player}{score} ? $$xml{server}{$key}{players}{player}{score} : 0;
+      $$xml{server}{$key}{player}{$$xml{server}{$key}{players}{player}{name}}{ping}  = exists $$xml{server}{$key}{players}{player}{ping}  ? $$xml{server}{$key}{players}{player}{ping}  : 1;
+      $$xml{server}{$key}{player}{$$xml{server}{$key}{players}{player}{name}}{team}  = exists $$xml{server}{$key}{players}{player}{team}  ? $$xml{server}{$key}{players}{player}{team}  : 0;
    }
 
-   delete $$xml{server}{$name}{players};
+   delete $$xml{server}{$key}{players};
+
 }
 
 my $totalplayers  = 0;
@@ -224,13 +226,13 @@ my $activeservers = 0;
 my $totalbots     = 0;
 
 for my $key (keys %{$$xml{server}}) {
-   $$xml{server}{$key}{realhostname} = encode_entities(decode_utf8(pack('H*', $key)));
+   $$xml{server}{$key}{realname} = encode_entities(decode_utf8(pack('H*', $$xml{server}{$key}{name})));
    $$xml{server}{$key}{map} = encode_entities(decode_utf8(pack('H*', $$xml{server}{$key}{map})));
 
    $$xml{server}{$key}{numplayers} -= $$xml{server}{$key}{rule}{bots};
 
    for (keys %{$$xml{server}{$key}{player}}) {
-      $$xml{server}{$key}{player}{$_}{nick} = formatnick($_);
+      $$xml{server}{$key}{player}{$$xml{server}{$key}{player}{$_}{name}}{nick} = formatnick($$xml{server}{$key}{player}{$_}{name});
       delete $$xml{server}{$key}{player}{$_}{name};
    }
 
@@ -240,7 +242,6 @@ for my $key (keys %{$$xml{server}}) {
    $$xml{server}{$key}{version}   = $ver;
    $$xml{server}{$key}{impure}    = substr($impure, 1);
    $$xml{server}{$key}{slots}     = substr($slots, 1);
-   #$$xml{server}{$key}{mode}      = uc($mode) eq 'DM' && $$xml{server}{$key}{rule}{realhostname} =~ /duel/i ? 'DUEL' : uc($mode);
    $$xml{server}{$key}{mode}      = uc($mode) eq 'DM' && $$xml{server}{$key}{slots} + $$xml{server}{$key}{numplayers} - $$xml{server}{$key}{numspectators} == 2 ? 'DUEL' : uc($mode);
    $$xml{server}{$key}{fballowed} = substr($flags, 1) & 1 ? 1 : 0;
    $$xml{server}{$key}{teamplay}  = substr($flags, 1) & 2 ? 1 : 0;
@@ -258,16 +259,17 @@ for my $key (keys %{$$xml{server}}) {
 
    my $rec = $gi->record_for_address((split(':', $$xml{server}{$key}{address}))[0]);
    $$xml{server}{$key}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
-   $$xml{server}{$key}{geo} = 'AU' if ($$xml{server}{$key}{realhostname} =~ /australi[as]/i); # shitty workaround
+   #$$xml{server}{$key}{geo} = 'AU' if ($$xml{server}{$key}{realname} =~ /australi[as]/i); # shitty workaround
 }
 
-$$ttvars{lastupdate}    = time - (stat($xmlservers))[9];
-$$ttvars{activeservers} = $activeservers;
-$$ttvars{totalservers}  = $totalservers;
-$$ttvars{totalplayers}  = $totalplayers;
-$$ttvars{totalbots}     = $totalbots;
+my $fstat = (stat($xmlservers))[9];
 
-$$ttvars{measure} = \&measure;
+$$xml{info}{lastupdateepoch} = $fstat;
+$$xml{info}{lastupdate}      = time - $fstat;
+$$xml{info}{activeservers}   = $activeservers;
+$$xml{info}{totalservers}    = $totalservers;
+$$xml{info}{totalplayers}    = $totalplayers;
+$$xml{info}{totalbots}       = $totalbots;
 
 ###
 
@@ -277,6 +279,8 @@ given ($qdest) {
 }
 
 sub page_index {
+   $$ttvars{measure} = \&measure;
+
    $$ttvars{s} = $xml;
 
    process('serverlist');
@@ -285,15 +289,6 @@ sub page_index {
 }
 
 sub page_json {
-   my $fstat = (stat($xmlservers))[9];
-
-   $$xml{info}{lastupdateepoch} = $fstat;
-   $$xml{info}{lastupdate}      = time - $fstat;
-   $$xml{info}{activeservers}   = $activeservers;
-   $$xml{info}{totalservers}    = $totalservers;
-   $$xml{info}{totalplayers}    = $totalplayers;
-   $$xml{info}{totalbots}       = $totalbots;
-
    $$xml{info}{measure} = measure($begintime);
 
    if ($qpretty) {

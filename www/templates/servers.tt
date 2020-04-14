@@ -80,10 +80,10 @@
                         </thead>
                         <tbody>
                            [% IF i.numplayers %]
-                           [% i_sorted = i.teamplay ? i.player.values.nsort('team', 'score').reverse : i.player.values.nsort('score').reverse %]
+                           [% i_sorted = i.teamplay ? i.players.nsort('team', 'score').reverse : i.players.nsort('score').reverse %]
                            [% FOREACH p IN i_sorted %]
                            <tr[% IF i.teamplay %] [% IF p.team == 1 %]style="color: red;"[% ELSIF p.team == 2 %]class="bls" style="color: blue;"[% ELSIF p.team == 3 %]class="yes" style="color: yellow;"[% ELSIF p.team == 4 %]class="fus" style="color: fuchsia;"[% END %][% END %]>
-                              <td>[% p.nick %]</td>
+                              <td>[% p.name %]</td>
                               <td style="font-size:0.7em;">[% IF p.ping %][% p.ping %][% ELSE %]bot[% END %]</td>
                               <td>[% IF p.score == -666 %]spec[% ELSE %][% p.score %][% END %]</td>
                            </tr>

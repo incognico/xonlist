@@ -17,13 +17,12 @@ use Encode::Simple qw(encode_utf8 decode_utf8);
 use HTML::Entities;
 use MaxMind::DB::Reader;
 use Template;
-use File::Slurper 'read_text';
-use XML::Fast;
+use File::Slurper qw(read_lines read_text);
 use JSON;
 
 my $debug = 0;
 
-my $xmlservers  = '/srv/www/xonotic.lifeisabug.com/files/current.xml';
+my $qstat_json  = '/srv/www/xonotic.lifeisabug.com/files/current.json';
 my $checkupdate = '/srv/www/xonotic.lifeisabug.com/files/checkupdate.txt';
 my $geodb       = '/home/k/GeoLite2-City.mmdb';
 
@@ -163,114 +162,65 @@ sub formatnick {
 
 ###
 
-my @banned;
-
 my $qdest   = param('dest')   || 'index';
 my $qpretty = param('pretty') || 0;
 
-my $xmlin = xml2hash(read_text($xmlservers), attr => '', text => 'val');
-
-open(my $fh, "<", $checkupdate)
-   or croak("Can't open update file: $!");
-
-while (my $line = <$fh>) {
-   chomp $line;
-   push (@banned, $1) if ($line =~ /^B (.+):$/);
+my @banned;
+for (read_lines($checkupdate)) {
+   push (@banned, $1) if ($_ =~ /^B (.+):$/);
 }
 
-close $fh;
+my $qstat = decode_json(read_text($qstat_json));
+my $gi    = MaxMind::DB::Reader->new(file => $geodb);
 
-my $gi = MaxMind::DB::Reader->new(file => $geodb);
+my ($totalplayers, $totalservers, $activeservers, $totalbots, $vars) = (0, 0, 0, 0);
 
-my $xml;
-
-for (@{$$xmlin{qstat}{server}}) {
-   next unless $$_{hostname};
-   next unless $$_{status} eq 'UP';
+for (@{$qstat}) {
+   next unless ($$_{hostname} && $$_{status} eq 'online');
+   next if ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
 
    my $key = $$_{hostname};
+   $$vars{server}{$key} = $_;
 
-   $$xml{server}{$key} = $_ unless ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
+   delete $$vars{server}{$key}{$_} for qw(gametype hostname protocol retries status);
 
-   delete $$xml{server}{$key}{$_} for qw(hostname retries status type);
+   $$vars{server}{$key}{numbots}     = int($$_{rules}{bots});
+   $$vars{server}{$key}{numplayers} -= $$_{rules}{bots};
 
-   for (@{$$xml{server}{$key}{rules}{rule}}) {
-       $$xml{server}{$key}{rule}{$$_{name}} = $$_{val};
-   }
+   ($$vars{server}{$key}{enc}, $$vars{server}{$key}{d0id}) = (defined $$_{rules}{d0_blind_id} ? int(split(' ', $$_{rules}{d0_blind_id})) : 0, 0);
 
-   delete $$xml{server}{$key}{rules};
+   my ($mode, $ver, $impure, $slots, $flags, $mode2) = split(':', $$_{rules}{qcstatus});
+   $$vars{server}{$key}{version}   = $ver;
+   $$vars{server}{$key}{impure}    = int(substr($impure, 1));
+   $$vars{server}{$key}{slots}     = int(substr($slots, 1));
+   $$vars{server}{$key}{mode}      = uc($mode) eq 'DM' && $$_{slots} + $$_{numplayers} - $$_{numspectators} == 2 ? 'DUEL' : uc($mode);
+   $$vars{server}{$key}{fballowed} = substr($flags, 1) & 1 ? 1 : 0;
+   $$vars{server}{$key}{teamplay}  = substr($flags, 1) & 2 ? 1 : 0;
+   $$vars{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
+   $$vars{server}{$key}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
 
-   unless ($$xml{server}{$key}{players}) {
-      delete $$xml{server}{$key}{players};
-      next;
-   }
+   $$vars{info}{activeservers}++ if ($$_{numplayers} > 0); 
+   $$vars{info}{totalservers} ++;
+   $$vars{info}{totalplayers} += $$_{numplayers};
+   $$vars{info}{totalbots}    += $$_{rules}{bots};
 
-   if (ref($$xml{server}{$key}{players}{player}) eq 'ARRAY') {
-      for (@{$$xml{server}{$key}{players}{player}}) {
-         $$xml{server}{$key}{player}{$$_{name}} = $_;
-      }
-   }
-   elsif (ref($$xml{server}{$key}{players}{player}) eq 'HASH') {
-      $$xml{server}{$key}{player}{$$xml{server}{$key}{players}{player}{name}}{name}  = exists $$xml{server}{$key}{players}{player}{name}  ? $$xml{server}{$key}{players}{player}{name}  : 'unconnected';
-      $$xml{server}{$key}{player}{$$xml{server}{$key}{players}{player}{name}}{score} = exists $$xml{server}{$key}{players}{player}{score} ? $$xml{server}{$key}{players}{player}{score} : 0;
-      $$xml{server}{$key}{player}{$$xml{server}{$key}{players}{player}{name}}{ping}  = exists $$xml{server}{$key}{players}{player}{ping}  ? $$xml{server}{$key}{players}{player}{ping}  : 1;
-      $$xml{server}{$key}{player}{$$xml{server}{$key}{players}{player}{name}}{team}  = exists $$xml{server}{$key}{players}{player}{team}  ? $$xml{server}{$key}{players}{player}{team}  : 0;
-   }
+   delete $$vars{server}{$key}{rules};
 
-   delete $$xml{server}{$key}{players};
+   my $rec = $gi->record_for_address((split(':', $$_{address}))[0]);
+   $$vars{server}{$key}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
+   #$$vars{server}{$key}{geo} = 'AU' if ($$vars{server}{$key}{realname} =~ /australi[as]/i); # shitty workaround
+
+   $$vars{server}{$key}{realname} = encode_entities(decode_utf8(pack('H*', $$_{name})));
+   $$vars{server}{$key}{map}      = encode_entities(decode_utf8(pack('H*', $$_{map})));
+
+   $$_{name} = formatnick($$_{name}) for (@{$$vars{server}{$key}{players}});
 
 }
 
-my $totalplayers  = 0;
-my $totalservers  = 0;
-my $activeservers = 0;
-my $totalbots     = 0;
+my $fstat = (stat($qstat_json))[9];
 
-for my $key (keys %{$$xml{server}}) {
-   $$xml{server}{$key}{realname} = encode_entities(decode_utf8(pack('H*', $$xml{server}{$key}{name})));
-   $$xml{server}{$key}{map} = encode_entities(decode_utf8(pack('H*', $$xml{server}{$key}{map})));
-
-   $$xml{server}{$key}{numplayers} -= $$xml{server}{$key}{rule}{bots};
-
-   for (keys %{$$xml{server}{$key}{player}}) {
-      $$xml{server}{$key}{player}{$$xml{server}{$key}{player}{$_}{name}}{nick} = formatnick($$xml{server}{$key}{player}{$_}{name});
-      delete $$xml{server}{$key}{player}{$_}{name};
-   }
-
-   ($$xml{server}{$key}{enc}, $$xml{server}{$key}{d0id}) = (defined $$xml{server}{$key}{rule}{d0_blind_id} ? split(' ', $$xml{server}{$key}{rule}{d0_blind_id}) : 0, 0);
-
-   my ($mode, $ver, $impure, $slots, $flags, $mode2) = split(':', $$xml{server}{$key}{rule}{qcstatus});
-   $$xml{server}{$key}{version}   = $ver;
-   $$xml{server}{$key}{impure}    = substr($impure, 1);
-   $$xml{server}{$key}{slots}     = substr($slots, 1);
-   $$xml{server}{$key}{mode}      = uc($mode) eq 'DM' && $$xml{server}{$key}{slots} + $$xml{server}{$key}{numplayers} - $$xml{server}{$key}{numspectators} == 2 ? 'DUEL' : uc($mode);
-   $$xml{server}{$key}{fballowed} = substr($flags, 1) & 1 ? 1 : 0;
-   $$xml{server}{$key}{teamplay}  = substr($flags, 1) & 2 ? 1 : 0;
-   $$xml{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
-   $$xml{server}{$key}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
-
-   $$xml{server}{$key}{numbots}   = $$xml{server}{$key}{rule}{bots};
-
-   $activeservers++ if ($$xml{server}{$key}{numplayers} > 0); 
-   $totalservers ++;
-   $totalplayers += $$xml{server}{$key}{numplayers};
-   $totalbots    += $$xml{server}{$key}{rule}{bots};
-
-   delete $$xml{server}{$key}{rule};
-
-   my $rec = $gi->record_for_address((split(':', $$xml{server}{$key}{address}))[0]);
-   $$xml{server}{$key}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
-   #$$xml{server}{$key}{geo} = 'AU' if ($$xml{server}{$key}{realname} =~ /australi[as]/i); # shitty workaround
-}
-
-my $fstat = (stat($xmlservers))[9];
-
-$$xml{info}{lastupdateepoch} = $fstat;
-$$xml{info}{lastupdate}      = time - $fstat;
-$$xml{info}{activeservers}   = $activeservers;
-$$xml{info}{totalservers}    = $totalservers;
-$$xml{info}{totalplayers}    = $totalplayers;
-$$xml{info}{totalbots}       = $totalbots;
+$$vars{info}{lastupdate_epoch} = $fstat;
+$$vars{info}{lastupdate}       = time - $fstat;
 
 ###
 
@@ -282,7 +232,7 @@ given ($qdest) {
 sub page_index {
    $$ttvars{measure} = \&measure;
 
-   $$ttvars{s} = $xml;
+   $$ttvars{s} = $vars;
 
    process('serverlist');
 
@@ -290,13 +240,13 @@ sub page_index {
 }
 
 sub page_json {
-   $$xml{info}{measure} = measure($begintime);
+   $$vars{info}{measure} = measure($begintime);
 
    if ($qpretty) {
-      $$ttvars{json} = to_json($xml, { utf8 => 1, pretty => 1 });
+      $$ttvars{json} = to_json($vars, { utf8 => 1, pretty => 1 });
    }
    else {
-      $$ttvars{json} = encode_json($xml);
+      $$ttvars{json} = encode_json($vars);
    }
 
    process('json', 'application/json');

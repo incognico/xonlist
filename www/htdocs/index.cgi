@@ -192,7 +192,7 @@ for (@{$$xmlin{qstat}{server}}) {
 
    $$xml{server}{$key} = $_ unless ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
 
-   delete $$xml{server}{$key}{$_} for qw(hostname retries type);
+   delete $$xml{server}{$key}{$_} for qw(hostname retries status type);
 
    for (@{$$xml{server}{$key}{rules}{rule}}) {
        $$xml{server}{$key}{rule}{$$_{name}} = $$_{val};

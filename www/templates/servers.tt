@@ -18,7 +18,6 @@
         </thead>
         <tbody>
            [% FOREACH i IN s.server.values.sort('realname').reverse.nsort('numplayers').reverse %]
-           [% NEXT IF i.status != 'UP' %]
            <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] hidden empty[% END %] info">
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
               <td>[% IF i.numplayers > 0 %]<strong>[% i.realname %]</strong>[% ELSE %][% i.realname %][% END %]</td>

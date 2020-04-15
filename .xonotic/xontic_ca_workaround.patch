@@ -1,0 +1,27 @@
+diff --git a/qstat.c b/qstat.c
+index f797960..ad78580 100644
+--- a/qstat.c
++++ b/qstat.c
+@@ -6521,7 +6521,21 @@ player_info:            debug(3, "player info");
+ 				break;
+ 			}
+ 
+-			rc = sscanf(pkt, "%d %n", &frags, &len);
++			// Xonotic in CA mode shows damage (float) instead of frags (int)
++			// 1.0 == 100 dmg
++			// https://github.com/multiplay/qstat/issues/89
++			float frags_f;
++			char tmp_frags[16];
++
++			sscanf(pkt, "%s", (char *)&tmp_frags);
++
++			if (strstr(tmp_frags, ".") != NULL) {
++				rc = sscanf(pkt, "%f %n", &frags_f, &len);
++				frags = (int)(frags_f*100);
++			} else {
++				rc = sscanf(pkt, "%d %n", &frags, &len);
++			}
++
+ 			if ((rc == 1) && (pkt[len] != '"')) {
+ 				pkt += len;
+ 				rc = sscanf(pkt, "%d %n", &ping, &len);

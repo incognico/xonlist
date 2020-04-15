@@ -75,7 +75,7 @@
                            <tr>
                               <th>Name</th>
                               <th>Ping</th>
-                              <th>Score</th>
+                              <th>[% IF i.mode == 'CA' %]Damage Dealt[% ELSE %]Score[% END %]</th>
                            </tr>
                         </thead>
                         <tbody>

@@ -50,7 +50,7 @@ sub measure {
 }
 
 sub process {
-   my $tmpl = shift || 'serverlist';
+   my $tmpl = shift || 'xonlist';
    my $type = shift || 'text/html';
 
    if ($debug) {
@@ -187,7 +187,9 @@ for (@{$qstat}) {
    $$vars{server}{$key}{numbots}     = int($$_{rules}{bots});
    $$vars{server}{$key}{numplayers} -= $$_{rules}{bots};
 
-   ($$vars{server}{$key}{enc}, $$vars{server}{$key}{d0id}) = (defined $$_{rules}{d0_blind_id} ? int(split(' ', $$_{rules}{d0_blind_id})) : 0, 0);
+   my $enc;
+   ($enc, $$vars{server}{$key}{d0id}) = (defined $$_{rules}{d0_blind_id} ? split(' ', $$_{rules}{d0_blind_id}) : 0, 0);
+   $$vars{server}{$key}{enc} = int($enc);
 
    my ($mode, $ver, $impure, $slots, $flags, $mode2) = split(':', $$_{rules}{qcstatus});
    $$vars{server}{$key}{version}   = $ver;
@@ -234,7 +236,7 @@ sub page_index {
 
    $$ttvars{s} = $vars;
 
-   process('serverlist');
+   process('xonlist');
 
    return;
 }

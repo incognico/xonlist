@@ -14,13 +14,11 @@
    <meta name="msapplication-starturl" content="[% url %]/">
    <link rel="manifest" href="[% url %]/manifest.json">
 
-
    <!-- CSS -->
    <link rel="stylesheet" href="[% url %]/css/normalize.css">
    <link rel="stylesheet" href="[% url %]/css/skeleton.css">
    <link rel="stylesheet" href="[% url %]/css/style.css">
-   <link rel="preload" href="[% url %]/css/flags.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-   <noscript><link rel="stylesheet" href="[% url %]/css/flags.css"></noscript>
+   <link rel="stylesheet" href="[% url %]/css/flags.css">
 
    <!-- JQ -->
    <script src="[% url %]/js/jquery-3.5.0.slim.min.js"></script>

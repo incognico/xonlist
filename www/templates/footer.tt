@@ -1,5 +1,5 @@
 <!-- page generation took [% measure(begintime) %] seconds -->
-<! --- JS -->
+<!-- JS -->
 <script src="[% url %]/js/clipboard.min.js"></script>
 <script>
   var clipboard = new ClipboardJS('.clipboard');

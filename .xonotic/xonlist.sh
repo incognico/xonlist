@@ -14,7 +14,7 @@ cat $tmp/tmp-*-out | sort | uniq > $tmp/tmp-all-out
 
 mkdir -p $tmp/json
 
-qstat -cfg $cfg -json -hpn -hsn -u -R -P -carets -f $tmp/tmp-all-out > $tmp/tmp-json-out
+qstat -cfg $cfg -retry 5 -json -hpn -hsn -u -R -P -carets -f $tmp/tmp-all-out > $tmp/tmp-json-out
 cp $tmp/tmp-json-out /srv/www/xonotic.lifeisabug.com/files/current.json
 
 rm $tmp/tmp-*-out

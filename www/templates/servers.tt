@@ -48,7 +48,7 @@
                            </tr>
                            <tr title="[% i.d0id %]">
                               <td>Encryption:</td>
-                              <td><strong>[% IF i.enc == 2 %]Required[% ELSIF i.enc == 1 %]Supported[% ELSIF i.enc == 0 %]Not Supported[% END %]</strong></td>
+                              <td><strong>[% IF i.enc == 3 %]Required[% ELSIF i.enc == 2 %]Requested[% ELSIF i.enc == 1 %]Supported[% ELSIF i.enc == 0 %]Not Supported[% END %]</strong></td>
                            </tr>
                            <tr>
                               <td>Player Statistics:</td>

@@ -177,6 +177,7 @@ my ($totalplayers, $totalservers, $activeservers, $totalbots, $vars) = (0, 0, 0,
 
 for (@{$qstat}) {
    next unless ($$_{hostname} && $$_{status} eq 'online');
+   next if ($$_{rules}{gameversion} > 65535);
    next if ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
 
    my $key = $$_{hostname};

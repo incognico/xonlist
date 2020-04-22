@@ -22,10 +22,10 @@
            [% FOREACH i IN s.server.values.sort('realname').reverse.nsort('numplayers').reverse %]
            <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] hidden empty[% END %] info">
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
-              <td>[% IF i.numplayers > 0 %]<b>[% i.realname %]</b>[% ELSE %][% i.realname %][% END %]</td>
+              <td>[% i.realname %]</td>
               <td>[% i.mode %]<br><span class="size065">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
               <td>[% i.map %]</td>
-              <td>[% IF i.numplayers > 0 %]<b>[% i.numplayers %]</b>[% ELSE %][% i.numplayers %][% END %]<span class="size065">/[% i.maxplayers %]</span></td>
+              <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span class="size065">/[% i.maxplayers %]</span></td>
               <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %];toggleconsole" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
               <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
            </tr>

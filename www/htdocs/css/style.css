@@ -17,21 +17,13 @@ body {
   font-family: Xolonium, sans-serif !important;
   color: #222;
   overflow-y: scroll;
-  scrollbar-face-color: #646464;
-  scrollbar-base-color: #646464;
-  scrollbar-3dlight-color: #646464;
-  scrollbar-highlight-color: #646464;
-  scrollbar-track-color: #fff;
-  scrollbar-arrow-color: #fff;
-  scrollbar-shadow-color: #646464;
-  scrollbar-dark-shadow-color: #646464;
 }
 
 ::-webkit-scrollbar { width: 8px; height: 3px; }
 ::-webkit-scrollbar-button { background-color: #666; }
 ::-webkit-scrollbar-track { background-color: #646464; }
 ::-webkit-scrollbar-track-piece { background-color: #fff; }
-::-webkit-scrollbar-thumb { height: 50px; background-color: #666; border-radius: 3px; }
+::-webkit-scrollbar-thumb { height: 25px; background-color: #666; }
 ::-webkit-scrollbar-corner { background-color: #646464; }
 ::-webkit-resizer { background-color: #666; }
 
@@ -69,22 +61,22 @@ tbody.players {
 
 .team1red {
   color: #E02130;
-  //color: #F54C00;
+  /* color: #F54C00; */
 }
 
 .team2blue {
   color: #009AE4;
-  //color: #33C3F0;
+  /* color: #33C3F0; */
 }
 
 .team3yellow {
   color: #FF9600;
-  //color: #FAB243;
+  /* color: #FAB243; */
 }
 
 .team4pink {
   color: #F44EA3;
-  //color: #C71AFD;
+  /* color: #C71AFD; */
 }
 
 div.one-full {
@@ -114,7 +106,8 @@ tr.stripe:nth-child(4n-1)	{
   background-color: rgb(245,245,245,0.5);
 }
 
-tbody.details2 tr td:nth-child(2) {
+tbody.details2 tr td:nth-child(2),
+tr.info:not(.empty) td:nth-child(2) {
    font-weight: bold;
 }
 
@@ -124,16 +117,14 @@ tbody.details2 tr td:nth-child(2) {
   right: -100px;
   bottom: -40px;
   z-index: -999;
-  opacity: 0.3;
-  filter: alpha(opacity=30);
+  opacity: 0.35;
+  filter: alpha(opacity=35%);
 }
 
 @media screen and (prefers-color-scheme: dark) {
   body {
     background-color: #222;
     color: #fff;
-    scrollbar-track-color: #000;
-    scrollbar-arrow-color: #000;
   }
 
   ::-webkit-scrollbar-track-piece { background-color: #000; }

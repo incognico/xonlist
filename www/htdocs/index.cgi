@@ -163,6 +163,7 @@ sub formatnick {
 ###
 
 my $qdest   = param('dest')   || 'index';
+my $qsingle = param('single') || 0;
 my $qpretty = param('pretty') || 0;
 
 my @banned;
@@ -177,10 +178,11 @@ my ($totalplayers, $totalservers, $activeservers, $totalbots, $vars) = (0, 0, 0,
 
 for (@{$qstat}) {
    next unless ($$_{hostname} && $$_{status} eq 'online');
+   next if ($qsingle && $$_{address} ne $qsingle);
    next if ($$_{rules}{gameversion} > 65535);
    next if ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
 
-   my $key = $$_{hostname};
+   my $key = $$_{address};
    $$vars{server}{$key} = $_;
 
    delete $$vars{server}{$key}{$_} for qw(gametype hostname protocol retries status);
@@ -217,7 +219,6 @@ for (@{$qstat}) {
    $$vars{server}{$key}{map}      = encode_entities(decode_utf8(pack('H*', $$_{map})));
 
    $$_{name} = formatnick($$_{name}) for (@{$$vars{server}{$key}{players}});
-
 }
 
 my $fstat = (stat($qstat_json))[9];
@@ -235,9 +236,10 @@ given ($qdest) {
 sub page_index {
    $$ttvars{measure} = \&measure;
 
+   $$vars{info}{single} = $qsingle ? 1 : 0;
    $$ttvars{s} = $vars;
 
-   process('xonlist');
+   $qsingle ? process('servers') : process('xonlist');
 
    return;
 }
@@ -245,12 +247,7 @@ sub page_index {
 sub page_json {
    $$vars{info}{measure} = measure($begintime);
 
-   if ($qpretty) {
-      $$ttvars{json} = to_json($vars, { utf8 => 1, pretty => 1 });
-   }
-   else {
-      $$ttvars{json} = encode_json($vars);
-   }
+   $qpretty ? ($$ttvars{json} = to_json($vars, { utf8 => 1, pretty => 1 })) : ($$ttvars{json} = encode_json($vars));
 
    process('json', 'application/json');
 

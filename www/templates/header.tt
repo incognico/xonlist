@@ -20,9 +20,6 @@
    <link rel="stylesheet" href="[% url %]/css/style.css">
    <link rel="stylesheet" href="[% url %]/css/flags.css">
 
-   <!-- JQ -->
-   <script src="[% url %]/js/jquery-3.5.0.slim.min.js"></script>
-
    <!-- Icons -->
    <link rel="icon" href="[% url %]/images/xon96.png" type="image/png">
    <link rel="apple-touch-icon" href="[% url %]/images/xon180.png">

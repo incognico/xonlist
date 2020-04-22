@@ -17,10 +17,26 @@ body {
   font-family: Xolonium, sans-serif !important;
   color: #222;
   overflow-y: scroll;
+  scrollbar-face-color: #646464;
+  scrollbar-base-color: #646464;
+  scrollbar-3dlight-color: #646464;
+  scrollbar-highlight-color: #646464;
+  scrollbar-track-color: #fff;
+  scrollbar-arrow-color: #fff;
+  scrollbar-shadow-color: #646464;
+  scrollbar-dark-shadow-color: #646464;
 }
 
+::-webkit-scrollbar { width: 8px; height: 3px; }
+::-webkit-scrollbar-button { background-color: #666; }
+::-webkit-scrollbar-track { background-color: #646464; }
+::-webkit-scrollbar-track-piece { background-color: #fff; }
+::-webkit-scrollbar-thumb { height: 50px; background-color: #666; border-radius: 3px; }
+::-webkit-scrollbar-corner { background-color: #646464; }
+::-webkit-resizer { background-color: #666; }
+
 .container {
-  max-width: 1000px !important;
+  max-width: 1060px !important;
 }
 
 .hidden {
@@ -30,6 +46,43 @@ body {
 .button-small {
   padding: 0 3px !important;
   min-width: 24px;
+}
+
+.center {
+  text-align: center;
+}
+
+.size065 {
+  font-size: 0.65em;
+}
+
+.size08 {
+  font-size: 0.8em;
+}
+
+.team1red {
+  color: red;
+}
+
+.team2blue {
+  color: blue;
+}
+
+.team3yellow {
+  color: yellow;
+}
+
+.team4pink {
+  color: fuchsia;
+}
+
+.team3yellow, .team4pink {
+  text-shadow: 0 0 3px black;
+}
+
+div.one-full {
+  margin: 3.5% 0;
+  margin-right: 1%;
 }
 
 a {
@@ -55,10 +108,6 @@ tr.stripe:nth-child(4n-1)	{
   background-color: rgb(245,245,245,0.5);
 }
 
-tr.yes, tr.fus {
-  text-shadow: 0 0 3px black;
-}
-
 #erebus {
   float: right;
   position: fixed;
@@ -66,29 +115,33 @@ tr.yes, tr.fus {
   bottom: -40px;
   z-index: -999;
   opacity: 0.3;
-  filter: alpha(poacity=30);
+  filter: alpha(opacity=30);
 }
 
 @media screen and (prefers-color-scheme: dark) {
   body {
     background-color: #222;
     color: #fff;
+    scrollbar-track-color: #000;
+    scrollbar-arrow-color: #000;
   }
+
+  ::-webkit-scrollbar-track-piece { background-color: #000; }
 
   td, th {
     border-color: #181818;
   }
 
   tr.stripe:nth-child(4n),
-  tr.stripe:nth-child(4n-1)	{
+  tr.stripe:nth-child(4n-1) {
     background-color: rgb(24,24,24,0.5);
   }
 
-  tr.bls {
+  .team2blue {
     text-shadow: 0 0 6px white;
   }
 
-  tr.yes, tr.fus {
+  .team2yellow, .team4pink {
     text-shadow: none;
   }
 

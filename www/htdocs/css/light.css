@@ -1,0 +1,23 @@
+body {
+  background-color: #fff;
+  color: #222;
+}
+
+::-webkit-scrollbar-track-piece { background-color: #fff; }
+
+td, th {
+  border-color: #E1E1E1;
+}
+
+tr.stripe:nth-child(4n),
+tr.stripe:nth-child(4n-1)	{
+  background-color: rgb(245,245,245,0.5);
+}
+
+.button, input[type="button"] {
+  color: #555;
+}
+
+input[type=search] {
+  background-color: #fff;
+}

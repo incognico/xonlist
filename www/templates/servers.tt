@@ -103,7 +103,8 @@
 [% IF s.info.single != 1 %]
         </tbody>
      </table>
-     <p><button class="button kek" data-id="tempty">Show empty servers</button></p>
+     <aside><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
+     <p><button class=".u-cf button kek" data-id="tempty">Show empty servers</button></p>
      <p><a href="[% url %]/endpoint/json?pretty=1">JSON</a> &#x1F680; <a href="https://github.com/incognico/xonlist">GitHub</a></p>
 	</div>
  </div>

@@ -1,5 +1,6 @@
 <!-- page generation took [% measure(begintime) %] seconds -->
 <!-- JS -->
+<script src="[% url %]/js/dark-mode-toggle.min.mjs" type="module"></script>
 <script src="[% url %]/js/jquery-3.5.0.slim.min.js"></script>
 <script src="[% url %]/js/clipboard.min.js"></script>
 <script>

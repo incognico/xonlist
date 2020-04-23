@@ -14,11 +14,12 @@ BEGIN { $begintime = [gettimeofday()]; }
 use CGI qw(header param -utf8);
 use CGI::Carp qw(fatalsToBrowser warningsToBrowser);
 use Encode::Simple qw(encode_utf8 decode_utf8);
+use File::Slurper qw(read_lines read_text);
 use HTML::Entities;
+use JSON;
 use MaxMind::DB::Reader;
 use Template;
-use File::Slurper qw(read_lines read_text);
-use JSON;
+use Unicode::Truncate;
 
 my $debug = 0;
 
@@ -216,7 +217,9 @@ for (@{$qstat}) {
    #$$vars{server}{$key}{geo} = 'AU' if ($$vars{server}{$key}{realname} =~ /australi[as]/i); # shitty workaround
 
    $$vars{server}{$key}{realname} = encode_entities(decode_utf8(pack('H*', $$_{name})));
-   $$vars{server}{$key}{map}      = encode_entities(decode_utf8(pack('H*', $$_{map})));
+   my $map = decode_utf8(pack('H*', $$_{map}));
+   $$vars{server}{$key}{map}      = encode_entities($map);
+   $$vars{server}{$key}{maptrunc} = encode_entities(truncate_egc($map, 16)) unless ($qdest eq 'json');
 
    $$_{name} = formatnick($$_{name}) for (@{$$vars{server}{$key}{players}});
 }

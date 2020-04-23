@@ -3,8 +3,10 @@
  <div class="row">
 	<div class="one-full column">
 	  <h4>[% title %]</h4>
-     <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers. Last <a href="[% url %]" title="Refresh the list">update</a>d: [% s.info.lastupdate %] sec. ago.</p>
-     <input id="filter" type="search" placeholder="(WIP!) Filter by anything&hellip;">
+     <aside><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
+     <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
+     <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="[% url %]" title="Refresh the list">Click to refresh.</a></p>
+     <input id="filter .u-cf" type="search" placeholder="(WIP!) Filter by anything&hellip;">
      <table class="u-full-width" id="main">
         <thead>
            <tr>
@@ -24,7 +26,7 @@
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
               <td>[% i.realname %]</td>
               <td>[% i.mode %]<br><span class="size065">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
-              <td>[% i.map %]</td>
+              <td[% IF i.maptrunc != i.map %] title="[% i.map %]"[% END %]>[% i.maptrunc %]</td>
               <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span class="size065">/[% i.maxplayers %]</span></td>
               <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %];toggleconsole" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
               <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
@@ -103,8 +105,7 @@
 [% IF s.info.single != 1 %]
         </tbody>
      </table>
-     <aside><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
-     <p><button class=".u-cf button kek" data-id="tempty">Show empty servers</button></p>
+     <p><button class="button kek" data-id="tempty">Show empty servers</button></p>
      <p><a href="[% url %]/endpoint/json?pretty=1">JSON</a> &#x1F680; <a href="https://github.com/incognico/xonlist">GitHub</a></p>
 	</div>
  </div>

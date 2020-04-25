@@ -6,7 +6,7 @@
      <aside><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
      <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
      <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="[% url %]" title="Refresh the list">Click to refresh.</a></p>
-     <input id="filter .u-cf" type="search" placeholder="(WIP!) Filter by anything&hellip;">
+     <input id="filter" class=".u-cf" type="search" placeholder="(WIP!) Filter by anything&hellip;">
      <table class="u-full-width" id="main">
         <thead>
            <tr>

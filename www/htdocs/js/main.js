@@ -1,9 +1,4 @@
-// TODO:
-// - make everything searchable including inner table but do not toggle in inner table
-// - make it work with the "show empty servers" button, maybe change that to "toggle empty servers"
-// - fix :nth striping after event was triggered
-
-$(document).ready(function(){
+$(document).ready(function() {
   $("#filter").on("keyup search", function() {
     var value = $(this).val().toLowerCase();
     $("#main tbody > tr.info").filter(function() {

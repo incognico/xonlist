@@ -24,9 +24,9 @@
            [% FOREACH i IN s.server.values.sort('realname').reverse.nsort('numplayers').reverse %]
            <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] hidden empty[% END %] info">
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
-              <td>[% i.realname %]</td>
+              <td>[% i.realname | html_entity %]</td>
               <td>[% i.mode %]<br><span class="size065">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
-              <td[% IF i.maptrunc != i.map %] title="[% i.map %]"[% END %]>[% i.maptrunc %]</td>
+              <td[% IF i.maptrunc != i.map %] title="[% i.map | html_entity %]"[% END %]>[% i.maptrunc | html_entity %]</td>
               <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span class="size065">/[% i.maxplayers %]</span></td>
               <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %];toggleconsole" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
               <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
@@ -79,17 +79,17 @@
                            <tr>
                               <th>Name</th>
                               <th>Ping</th>
-                              <th>[% IF i.mode == 'CA' %]Damage Dealt[% ELSE %]Score[% END %]</th>
+                              <th>[% IF i.mode == 'CA' %]Damage Dealt[% ELSIF i.scorelabel %][% i.scorelabel.ucfirst %][% ELSE %]Score[% END %]</th>
                            </tr>
                         </thead>
                         <tbody class="players">
                            [% IF i.numplayers %]
-                           [% i_sorted = i.teamplay ? i.players.nsort('team', 'score').reverse : i.players.nsort('score').reverse %]
+                           [% i_sorted = i.teamplay ? ( i.scoreorder ? i.players.nsort('team', 'score') : i.players.nsort('team', 'score').reverse ) : ( i.scoreorder ? i.players.nsort('score') : i.players.nsort('score').reverse ) %]
                            [% FOREACH p IN i_sorted %]
                            <tr[% IF i.teamplay %] [% IF p.team == 1 %]class="team1red"[% ELSIF p.team == 2 %]class="team2blue"[% ELSIF p.team == 3 %]class="team3yellow"[% ELSIF p.team == 4 %]class="team4pink"[% END %][% END %]>
-                              <td>[% p.name %]</td>
+                              <td>[% p.name | html_entity %]</td>
                               <td>[% IF p.ping %][% p.ping %][% ELSE %]bot[% END %]</td>
-                              <td>[% IF p.score == -666 %]spec[% ELSIF p.score == -616 %]booted[% ELSE %][% p.score %][% END %]</td>
+                              <td>[% IF p.score == -666 || (i.mode == 'LMS' && p.score == 666) %]<span title="spectator">spec<span>[% ELSIF p.score == -616 %]<span title="out of game">oog</span>[% ELSIF i.scorelabel.match('(fastest|time)') %][% s2t(p.score) %][% ELSE %][% p.score %][% END %]</td>
                            </tr>
                            [% END %]
                            [% END %]

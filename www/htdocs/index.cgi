@@ -15,7 +15,6 @@ use CGI qw(header param -utf8);
 use CGI::Carp qw(fatalsToBrowser warningsToBrowser);
 use Encode::Simple qw(encode_utf8 decode_utf8);
 use File::Slurper qw(read_lines read_text);
-use HTML::Entities;
 use JSON;
 use MaxMind::DB::Reader;
 use Template;
@@ -138,19 +137,19 @@ my @qfont_unicode_glyphs = (
 );
 
 sub qfont_decode {
-    my $qstr = shift // '';
-    my @chars;
+   my $qstr = shift // '';
+   my @chars;
 
-    for (split('', $qstr)) {
-       my $i = ord($_) - 0xE000;
-       my $c = ($_ ge "\N{U+E000}" && $_ le "\N{U+E0FF}")
-          ? $qfont_unicode_glyphs[$i % @qfont_unicode_glyphs]
-          : $_;
-        #printf "<$_:$c|ord:%d>", ord;
-        push @chars, $c if defined $c;
-    }
+   for (split('', $qstr)) {
+      my $i = ord($_) - 0xE000;
+      my $c = ($_ ge "\N{U+E000}" && $_ le "\N{U+E0FF}")
+      ? $qfont_unicode_glyphs[$i % @qfont_unicode_glyphs]
+      : $_;
+      #printf "<$_:$c|ord:%d>", ord;
+      push @chars, $c if defined $c;
+   }
 
-    return join '', @chars;
+   return join '', @chars;
 }
 
 sub formatnick {
@@ -158,7 +157,18 @@ sub formatnick {
 
    $up =~ s/\^(\d|x[\dA-Fa-f]{3})//g;
 
-   return encode_entities(qfont_decode(decode_utf8($up)));
+   return qfont_decode(decode_utf8($up));
+}
+
+sub score2time {
+   my $score = shift || return '-';
+
+   return 0 unless ($score =~ /^[0-9]+/);
+
+   my $tsec = substr($score, -2);
+   my $sec  = substr($score, 0, -2);
+
+   return $sec . '.' . $tsec . ' sec.';
 }
 
 ###
@@ -210,9 +220,6 @@ for (@{$qstat}) {
       $$vars{server}{$key}{scoreflags} = $2;
       $$vars{server}{$key}{scoreorder} = $2 =~ /</ ? 1 : 0;
    }
-   else {
-      $$vars{server}{$key}{scorelabel} = 0;
-   }
 
    $$vars{info}{activeservers}++ if ($$_{numplayers} > 0); 
    $$vars{info}{totalservers} ++;
@@ -225,10 +232,10 @@ for (@{$qstat}) {
    $$vars{server}{$key}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
    #$$vars{server}{$key}{geo} = 'AU' if ($$vars{server}{$key}{realname} =~ /australi[as]/i); # shitty workaround
 
-   $$vars{server}{$key}{realname} = encode_entities(decode_utf8(pack('H*', $$_{name})));
+   $$vars{server}{$key}{realname} = decode_utf8(pack('H*', $$_{name}));
    my $map = decode_utf8(pack('H*', $$_{map}));
-   $$vars{server}{$key}{map}      = encode_entities($map);
-   $$vars{server}{$key}{maptrunc} = encode_entities(truncate_egc($map, 16)) unless ($qdest eq 'json');
+   $$vars{server}{$key}{map}      = $map;
+   $$vars{server}{$key}{maptrunc} = truncate_egc($map, 16) unless ($qdest eq 'json');
 
    $$_{name} = formatnick($$_{name}) for (@{$$vars{server}{$key}{players}});
 }
@@ -247,6 +254,7 @@ given ($qdest) {
 
 sub page_index {
    $$ttvars{measure} = \&measure;
+   $$ttvars{s2t} = \&score2time;
 
    $$vars{info}{single} = $qsingle ? 1 : 0;
    $$ttvars{s} = $vars;

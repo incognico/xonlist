@@ -195,7 +195,7 @@ for (@{$qstat}) {
    ($enc, $$vars{server}{$key}{d0id}) = (defined $$_{rules}{d0_blind_id} ? split(' ', $$_{rules}{d0_blind_id}) : 0, 0);
    $$vars{server}{$key}{enc} = int($enc);
 
-   my ($mode, $ver, $impure, $slots, $flags, $mode2) = split(':', $$_{rules}{qcstatus});
+   my ($mode, $ver, $impure, $slots, $flags, $mode2, undef, $scoreinfo) = split(':', $$_{rules}{qcstatus});
    $$vars{server}{$key}{version}   = $ver;
    $$vars{server}{$key}{impure}    = int(substr($impure, 1));
    $$vars{server}{$key}{slots}     = int(substr($slots, 1));
@@ -204,6 +204,15 @@ for (@{$qstat}) {
    $$vars{server}{$key}{teamplay}  = substr($flags, 1) & 2 ? 1 : 0;
    $$vars{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
    $$vars{server}{$key}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
+
+   if ($scoreinfo && $scoreinfo =~ /([a-z]+)([!<]{0,3})/) {
+      $$vars{server}{$key}{scorelabel} = $1;
+      $$vars{server}{$key}{scoreflags} = $2;
+      $$vars{server}{$key}{scoreorder} = $2 =~ /</ ? 1 : 0;
+   }
+   else {
+      $$vars{server}{$key}{scorelabel} = 0;
+   }
 
    $$vars{info}{activeservers}++ if ($$_{numplayers} > 0); 
    $$vars{info}{totalservers} ++;

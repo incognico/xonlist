@@ -17,8 +17,9 @@ use Encode::Simple qw(encode_utf8 decode_utf8);
 use File::Slurper qw(read_lines read_text);
 use JSON;
 use MaxMind::DB::Reader;
-use Template;
+use Template::AutoFilter;
 use Unicode::Truncate;
+use Lingua::EN::Numbers::Ordinate;
 
 my $debug = 0;
 
@@ -35,11 +36,12 @@ my %ttopts = (
    INCLUDE_PATH => '/srv/www/xonotic.lifeisabug.com/templates/',
    PRE_CHOMP    => 2,
    POST_CHOMP   => 2,
+   AUTO_FILTER  => 'html_entity',
 );
 
 croak("template folder $ttopts{INCLUDE_PATH} does not exist") unless (-e $ttopts{INCLUDE_PATH});
 
-my $tt = Template->new(\%ttopts);
+my $tt = Template::AutoFilter->new(\%ttopts);
 
 ###
 
@@ -253,8 +255,9 @@ given ($qdest) {
 }
 
 sub page_index {
-   $$ttvars{measure} = \&measure;
-   $$ttvars{s2t} = \&score2time;
+   $$ttvars{measure}  = \&measure;
+   $$ttvars{s2t}      = \&score2time;
+   $$ttvars{ordinate} = \&ordinate;
 
    $$vars{info}{single} = $qsingle ? 1 : 0;
    $$ttvars{s} = $vars;

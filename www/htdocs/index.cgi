@@ -301,7 +301,7 @@ sub page_index {
    $$ttvars{utrunc}   = \&truncate_egc;
 
    $$vars{info}{single} = $qsingle ? 1 : 0;
-   $$vars{info}{embed}  = $qembed ? 1 : 0;
+   $$vars{info}{embed}  = $qembed  ? 1 : 0;
    $$ttvars{s} = $vars;
 
    $qsingle ? ( $qembed ? process('embed') : process('servers') ) : process('xonlist');

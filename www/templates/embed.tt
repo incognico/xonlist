@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8">
+   <link rel="stylesheet" href="[% url %]/css/normalize.css">
+   <link rel="stylesheet" href="[% url %]/css/skeleton.css">
+   <link rel="stylesheet" href="[% url %]/css/common.css">
+   <link rel="stylesheet" href="[% url %]/css/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
+   <link rel="stylesheet" href="[% url %]/css/dark.css" media="(prefers-color-scheme: dark)">
+   <link rel="stylesheet" href="[% url %]/css/embed.css">
+   <link rel="stylesheet" href="[% url %]/css/flags.css">
+   <title>Xonotic Server Info</title>
+</head>
+<body>
+     <table class="u-full-width" id="main">
+        <thead>
+           <tr>
+              <th>&#x1F30D;</th>
+              <th>Name</th>
+              <th class="center">Type</th>
+              <th>Map</th>
+              <th>Players</th>
+           </tr>
+        </thead>
+        <tbody>
+[% INCLUDE servers.tt %]
+        </tbody>
+     </table>
+</body>
+</html>

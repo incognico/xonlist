@@ -1,8 +1,10 @@
-[% IF s.info.single != 1 %]
+[% USE format %]
+[% dmg2k = format('%.2fk') %]
+[% IF !s.info.single %]
 <div class="container">
  <div class="row">
-	<div class="one-full column">
-	  <h4>[% title %]</h4>
+   <div class="one-full column">
+     <h4>[% title %]</h4>
      <aside><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
      <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" href="https://xonotic.org/">Xonotic</a> on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
      <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="[% url %]" title="Refresh the list">Click to refresh.</a></p>
@@ -15,24 +17,28 @@
               <th class="center">Type</th>
               <th>Map</th>
               <th>Players</th>
+              [% IF !s.info.embed %]
               <th></th>
               <th></th>
+              [% END %]
            </tr>
         </thead>
         <tbody>
 [% END %]
            [% FOREACH i IN s.server.values.sort('realname').reverse.nsort('numplayers').reverse %]
-           <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] hidden empty[% END %] info">
+           <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] [% IF !s.info.embed %]hidden [% END %]empty[% END %] info">
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
               <td>[% i.realname %]</td>
               <td>[% i.mode %]<br><span class="size065">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
-              <td[% IF i.maptrunc != i.map %] title="[% i.map %]"[% END %]>[% i.maptrunc %]</td>
+              <td[% IF i.map.length > 16 %] title="[% i.map %]"[% END %]>[% utrunc(i.map, 16) %]</td>
               <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span class="size065">/[% i.maxplayers %]</span></td>
+              [% IF !s.info.embed %]
               <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %];toggleconsole" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
               <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
+              [% END %]
            </tr>
-           <tr class="hidden stripe details" data-id="[% i.address %]_details">
-              <td colspan="7">
+           <tr class="[% IF !s.info.embed %]hidden [% END %]stripe details" data-id="[% i.address %]_details">
+              <td colspan="[% IF s.info.embed %]5[% ELSE %]7[% END %]">
                   <div class="five columns">
                      <table class="u-full-width">
                         <thead>
@@ -58,10 +64,12 @@
                               <td>Player Statistics:</td>
                               <td>[% IF i.stats == 0 %]Not Supported[% ELSE %]Supported[% END %]</td>
                            </tr>
+                           [% IF i.fballowed == 0 %]
                            <tr>
                               <td>Fullbright Models:</td>
-                              <td>[% IF i.fballowed == 0 %]Forbidden[% ELSE %]Allowed[% END %]</td>
+                              <td>Forbidden</td>
                            </tr>
+                           [% END %]
                            <tr>
                               <td>Impure CVARs:</td>
                               <td>[% i.impure %]</td>
@@ -70,6 +78,16 @@
                               <td>Free Slots:</td>
                               <td>[% i.slots %]</td>
                            </tr>
+                           [% IF i.teamplay && i.scoreinfo.team %]
+                           [% prefer = i.scoreinfo.team.prefer %]
+                           [% t_scores = i.scoreinfo.team.$prefer.score %]
+                           [% FOREACH t IN t_scores %]
+                           <tr class="[% IF t.key == 1 %]team1red[% ELSIF t.key == 2 %]team2blue[% ELSIF t.key == 3 %]team3yellow[% ELSIF t.key == 4 %]team4pink[% END %]">
+                              <td>Team [% t.key %] [% i.scoreinfo.team.$prefer.label.ucfirst %]</td>
+                              <td>[% t.value %]</td>
+                           </tr>
+                           [% END %]
+                           [% END %]
                         </tbody>
                      </table>
                   </div>
@@ -77,19 +95,19 @@
                      <table class="u-full-width">
                         <thead>
                            <tr>
-                              <th>Name</th>
+                              <th>Player</th>
                               <th>Ping</th>
-                              <th>[% IF i.mode == 'CA' %]Damage Dealt[% ELSIF i.scorelabel %][% i.scorelabel.ucfirst %][% ELSE %]Score[% END %]</th>
+                              <th>[% IF i.mode == 'CA' %]Damage[% ELSIF i.mode == 'COOP' && i.mode2 == 'QUAKE' %]Deaths[% ELSIF i.scoreinfo.player.label %][% i.scoreinfo.player.label.ucfirst %][% ELSE %]Score[% END %]</th>
                            </tr>
                         </thead>
                         <tbody class="players">
                            [% IF i.numplayers %]
-                           [% i_sorted = i.teamplay ? ( i.scoreorder ? i.players.nsort('team', 'score') : i.players.nsort('team', 'score').reverse ) : ( i.scoreorder ? i.players.nsort('score') : i.players.nsort('score').reverse ) %]
-                           [% FOREACH p IN i_sorted %]
+                           [% p_sorted = i.teamplay ? ( i.scoreinfo.player.order ? i.players.nsort('score').nsort('team') : i.players.nsort('score').reverse.nsort('team') ) : ( i.scoreinfo.player.order ? i.players.nsort('score') : i.players.nsort('score').reverse ) %]
+                           [% FOREACH p IN p_sorted %]
                            <tr[% IF i.teamplay %] [% IF p.team == 1 %]class="team1red"[% ELSIF p.team == 2 %]class="team2blue"[% ELSIF p.team == 3 %]class="team3yellow"[% ELSIF p.team == 4 %]class="team4pink"[% END %][% END %]>
-                              <td>[% p.name %]</td>
+                              <td[% IF p.name.length > 64 %]title="[% p.name %]"[% END %]>[% utrunc(p.name, 64) %]</td>
                               <td>[% IF p.ping %][% p.ping %][% ELSE %]bot[% END %]</td>
-                              <td>[% IF p.score == -666 %]<span title="spectator">spec<span>[% ELSIF p.score == -616 %]<span title="out of game">oog</span>[% ELSIF i.scorelabel.match('(fastest|time)') %][% s2t(p.score) %][% ELSIF i.mode == 'LMS' %][% IF p.score > 255 || p.score == 0 %]-[% ELSE %][% ordinate(p.score) %][% END %][% ELSE %][% p.score %][% END %]</td>
+                              <td>[% IF p.score == -666 %]<span title="spectator">spec<span>[% ELSIF p.score == -616 %]<span title="out of game">oog</span>[% ELSIF i.scoreinfo.player.label.match('(fastest|time)') %][% s2t(p.score) %][% ELSIF i.mode == 'LMS' %][% IF p.score > 255 || p.score == 0 %]-[% ELSE %][% ordinate(p.score) %][% END %][% ELSIF i.mode == 'CA' %][% dmg2k(p.score / 1000) %][% ELSIF i.mode == 'COOP' && i.mode2 == 'QUAKE' %][% p.score * -1 %][% ELSE %][% p.score %][% END %]</td>
                            </tr>
                            [% END %]
                            [% END %]
@@ -102,12 +120,12 @@
               </td>
            </tr>
            [% END %]
-[% IF s.info.single != 1 %]
+[% IF !s.info.single %]
         </tbody>
      </table>
      <p><button class="button kek" data-id="tempty">Show empty servers</button></p>
      <p><a href="[% url %]/endpoint/json?pretty=1">JSON</a> &#x1F680; <a href="https://github.com/incognico/xonlist">GitHub</a></p>
-	</div>
+   </div>
  </div>
 </div>
 [% END %]

@@ -16,10 +16,10 @@ use CGI::Carp qw(fatalsToBrowser warningsToBrowser);
 use Encode::Simple qw(encode_utf8 decode_utf8);
 use File::Slurper qw(read_lines read_text);
 use JSON;
+use Lingua::EN::Numbers::Ordinate;
 use MaxMind::DB::Reader;
 use Template::AutoFilter;
 use Unicode::Truncate;
-use Lingua::EN::Numbers::Ordinate;
 
 my $debug = 0;
 
@@ -42,6 +42,13 @@ my %ttopts = (
 croak("template folder $ttopts{INCLUDE_PATH} does not exist") unless (-e $ttopts{INCLUDE_PATH});
 
 my $tt = Template::AutoFilter->new(\%ttopts);
+
+my $qdest   = param('dest')   || 'index';
+my $qsingle = param('single') || 0;
+my $qpretty = param('pretty') || 0;
+my $qembed  = param('embed')  || 0;
+
+$qsingle = $qembed if ($qembed);
 
 ###
 
@@ -175,13 +182,9 @@ sub score2time {
 
 ###
 
-my $qdest   = param('dest')   || 'index';
-my $qsingle = param('single') || 0;
-my $qpretty = param('pretty') || 0;
-
 my @banned;
 for (read_lines($checkupdate)) {
-   push (@banned, $1) if ($_ =~ /^B (.+):$/);
+   push (@banned, $1) if ($_ =~ /^B\s+(.+):\s+?$/);
 }
 
 my $qstat = decode_json(read_text($qstat_json));
@@ -207,7 +210,8 @@ for (@{$qstat}) {
    ($enc, $$vars{server}{$key}{d0id}) = (defined $$_{rules}{d0_blind_id} ? split(' ', $$_{rules}{d0_blind_id}) : 0, 0);
    $$vars{server}{$key}{enc} = int($enc);
 
-   my ($mode, $ver, $impure, $slots, $flags, $mode2, undef, $scoreinfo) = split(':', $$_{rules}{qcstatus});
+   # gametype:version:P<pure>:S<slots>:F<flags>:M<mode>::plabel,plabel:tlabel,tlabel:teamid:tscore,tscore:teamid:tscore,tscore
+   my ($mode, $ver, $impure, $slots, $flags, $mode2, undef, $pscoreinfo, $tscoreinfo, @tscores) = split(':', $$_{rules}{qcstatus});
    $$vars{server}{$key}{version}   = $ver;
    $$vars{server}{$key}{impure}    = int(substr($impure, 1));
    $$vars{server}{$key}{slots}     = int(substr($slots, 1));
@@ -217,10 +221,53 @@ for (@{$qstat}) {
    $$vars{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
    $$vars{server}{$key}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
 
-   if ($scoreinfo && $scoreinfo =~ /([a-z]+)([!<]{0,3})/) {
-      $$vars{server}{$key}{scorelabel} = $1;
-      $$vars{server}{$key}{scoreflags} = $2;
-      $$vars{server}{$key}{scoreorder} = $2 =~ /</ ? 1 : 0;
+   my $scoreinfo_re = qr/^(.+?)([<!]*?)(?:,(.+?)([<!]*?))?$/;
+
+   if (defined $pscoreinfo && $pscoreinfo =~ /$scoreinfo_re/) {
+      $$vars{server}{$key}{scoreinfo}{player}{label} = $1;
+      $$vars{server}{$key}{scoreinfo}{player}{flags} = $2;
+      $$vars{server}{$key}{scoreinfo}{player}{order} = $2 =~ /</ ? 1 : 0;
+      # secondary player score is not active in xon yet (fullstatus)
+   }
+
+   if (defined $tscoreinfo && $tscoreinfo =~ /$scoreinfo_re/g) {
+      $$vars{server}{$key}{scoreinfo}{team}{pri}{label} = $1;
+      $$vars{server}{$key}{scoreinfo}{team}{pri}{flags} = $2;
+      $$vars{server}{$key}{scoreinfo}{team}{pri}{order} = $2 =~ /</ ? 1 : 0;
+
+      if (defined $3) {
+         $$vars{server}{$key}{scoreinfo}{team}{prefer} = 'sec';
+         $$vars{server}{$key}{scoreinfo}{team}{sec}{label} = $3;
+         $$vars{server}{$key}{scoreinfo}{team}{sec}{flags} = $4;
+         $$vars{server}{$key}{scoreinfo}{team}{sec}{order} = $4 =~ /</ ? 1 : 0;
+      }
+      else {
+         $$vars{server}{$key}{scoreinfo}{team}{prefer} = 'pri';
+      }
+
+      my $teams = {
+          5 => '1', # red
+         14 => '2', # blue
+         13 => '3', # yellow
+         10 => '4', # pink
+      };
+
+      my $tmp;
+
+      while (my $val = shift(@tscores)) {
+         if ($#tscores+1 & 1) {
+            $tmp = $val;
+         }
+         else {
+            if ($$vars{server}{$key}{scoreinfo}{team}{prefer} eq 'sec') {
+               ($$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$tmp}},
+                $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$tmp}}) = split(',', $val);
+            }
+            else {
+               $$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$tmp}} = $val;
+            }
+         }
+      }
    }
 
    $$vars{info}{activeservers}++ if ($$_{numplayers} > 0); 
@@ -228,6 +275,7 @@ for (@{$qstat}) {
    $$vars{info}{totalplayers} += $$_{numplayers};
    $$vars{info}{totalbots}    += $$_{rules}{bots};
 
+   $$vars{server}{$key}{gamedir} = $$vars{server}{$key}{rules}{modname};
    delete $$vars{server}{$key}{rules};
 
    my $rec = $gi->record_for_address((split(':', $$_{address}))[0]);
@@ -235,9 +283,7 @@ for (@{$qstat}) {
    #$$vars{server}{$key}{geo} = 'AU' if ($$vars{server}{$key}{realname} =~ /australi[as]/i); # shitty workaround
 
    $$vars{server}{$key}{realname} = decode_utf8(pack('H*', $$_{name}));
-   my $map = decode_utf8(pack('H*', $$_{map}));
-   $$vars{server}{$key}{map}      = $map;
-   $$vars{server}{$key}{maptrunc} = truncate_egc($map, 16) unless ($qdest eq 'json');
+   $$vars{server}{$key}{map}      = decode_utf8(pack('H*', $$_{map}));
 
    $$_{name} = formatnick($$_{name}) for (@{$$vars{server}{$key}{players}});
 }
@@ -256,13 +302,15 @@ given ($qdest) {
 
 sub page_index {
    $$ttvars{measure}  = \&measure;
-   $$ttvars{s2t}      = \&score2time;
    $$ttvars{ordinate} = \&ordinate;
+   $$ttvars{s2t}      = \&score2time;
+   $$ttvars{utrunc}   = \&truncate_egc;
 
    $$vars{info}{single} = $qsingle ? 1 : 0;
+   $$vars{info}{embed}  = $qembed ? 1 : 0;
    $$ttvars{s} = $vars;
 
-   $qsingle ? process('servers') : process('xonlist');
+   $qsingle ? ( $qembed ? process('embed') : process('servers') ) : process('xonlist');
 
    return;
 }

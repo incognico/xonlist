@@ -5,21 +5,23 @@
        url('../fonts/xolonium-regular.woff2') format('woff2'),
        url('../fonts/xolonium-regular.woff') format('woff'),
        url('../fonts/xolonium-regular.ttf') format('truetype');
-  font-weight: 300;
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 body {
-  font-size: 1.4em; /* currently ems cause chrome bug misinterpreting rems on body element */
-  line-height: 1.2;
-  font-weight: 300 !important;
-  font-family: Xolonium, sans-serif !important;
+  font-family: Xolonium, sans-serif;
+  font-size: 1.3rem; /* currently ems cause chrome bug misinterpreting rems on body element */
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1.4rem;
   overflow-y: scroll;
+  text-rendering: optimizeLegibility;
 }
 
 p {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.4rem;
 }
 
 ::-webkit-scrollbar { width: 8px; height: 3px; }
@@ -38,7 +40,7 @@ aside {
 }
 
 .button-small {
-  padding: 0 3px !important;
+  padding: 0 3px;
   min-width: 24px;
 }
 
@@ -47,14 +49,18 @@ tr.info td:nth-child(3) {
   text-align: center;
 }
 
-.size065,
-tbody.players tr td:nth-child(2) {
-  font-size: 0.65em;
+.size0 {
+  font-size: 0.9rem;
 }
 
-.size08,
+.size1,
+tbody.players tr td:nth-child(2),
 tr.info td:nth-child(4) {
-  font-size: 0.8em;
+  font-size: 1rem;
+}
+
+tbody.players tr td:nth-child(3) {
+  font-size: 1.4rem;
 }
 
 tbody.players {
@@ -91,22 +97,26 @@ a {
 
 input[type=search] {
   width: 100%;
-  margin-top: 1.5rem;
+  margin-top: 1.4rem;
 }
 
 th:first-child,
 td:first-child {
-  padding-left: 3px;
+  padding-left: 4px;
 }
 
 th:last-child,
 td:last-child {
-  padding-right: 3px;
+  padding-right: 4px;
 }
 
+b,
+th,
 tbody.details2 tr td:nth-child(2),
 tr.info:not(.empty) td:nth-child(2) {
-   font-weight: bold;
+  font-weight: normal;
+  font-size: 1.5rem;
+  text-shadow: 0 0 1px #333;
 }
 
 #erebus {

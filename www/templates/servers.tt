@@ -29,9 +29,9 @@
            <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] [% IF !s.info.embed %]hidden [% END %]empty[% END %] info">
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
               <td>[% i.realname %]</td>
-              <td title="[% i.gamedir %]">[% i.mode %]<br><span class="size065">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
+              <td title="[% i.gamedir %]">[% i.mode %]<br><span class="size0">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
               <td[% IF i.map.length > 16 %] title="[% i.map %]"[% END %]>[% utrunc(i.map, 16) %]</td>
-              <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span class="size065">/[% i.maxplayers %]</span></td>
+              <td>[% IF i.numplayers > 0 %]<b>[% i.numplayers %]</b>[% ELSE %][% i.numplayers %][% END %]<span class="size1">/[% i.maxplayers %]</span></td>
               [% IF !s.info.embed %]
               <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %];toggleconsole" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
               <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>

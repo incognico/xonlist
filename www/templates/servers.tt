@@ -1,5 +1,5 @@
 [% USE format %]
-[% dmg2k = format('%.2fk') %]
+[% dmg2k = format('%.2f k') %]
 [% IF !s.info.single %]
 <div class="container">
  <div class="row">
@@ -29,7 +29,7 @@
            <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] [% IF !s.info.embed %]hidden [% END %]empty[% END %] info">
               <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
               <td>[% i.realname %]</td>
-              <td>[% i.mode %]<br><span class="size065">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
+              <td title="[% i.gamedir %]">[% i.mode %]<br><span class="size065">([% i.mode2 %][% IF i.impure == 0 %]+PURE[% END %])</span></td>
               <td[% IF i.map.length > 16 %] title="[% i.map %]"[% END %]>[% utrunc(i.map, 16) %]</td>
               <td>[% IF i.numplayers > 0 %]<strong>[% i.numplayers %]</strong>[% ELSE %][% i.numplayers %][% END %]<span class="size065">/[% i.maxplayers %]</span></td>
               [% IF !s.info.embed %]

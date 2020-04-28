@@ -29,6 +29,7 @@ my $geodb       = '/home/k/GeoLite2-City.mmdb';
 
 my $ttvars = {
    title => 'Xonotic Server List',
+   desc  => 'Online Server List for the ArenaFPS game Xonotic',
    url   => 'https://xonotic.lifeisabug.com',
 };
 
@@ -246,26 +247,19 @@ for (@{$qstat}) {
       }
 
       my $teams = {
-          5 => '1', # red
-         14 => '2', # blue
-         13 => '3', # yellow
-         10 => '4', # pink
+          5 => 1, # red
+         14 => 2, # blue
+         13 => 3, # yellow
+         10 => 4, # pink
       };
 
-      my $tmp;
-
-      while (my $val = shift(@tscores)) {
-         if ($#tscores+1 & 1) {
-            $tmp = $val;
+      while (my ($k, $v) = splice(@tscores, 0, 2)) {
+         if ($$vars{server}{$key}{scoreinfo}{team}{prefer} eq 'sec') {
+            ($$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}},
+             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = split(',', $v);
          }
          else {
-            if ($$vars{server}{$key}{scoreinfo}{team}{prefer} eq 'sec') {
-               ($$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$tmp}},
-                $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$tmp}}) = split(',', $val);
-            }
-            else {
-               $$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$tmp}} = $val;
-            }
+            $$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}} = $v;
          }
       }
    }

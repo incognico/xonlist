@@ -27,6 +27,7 @@
            [% INCLUDE servers.tt %]
         </tbody>
      </table>
+   <div><p class="size1">data from <a rel="noopener" href="https://xonotic.lifeisabug.com">xonotic.lifeisabug.com</a></p></div>
    </div>
 </body>
 </html>

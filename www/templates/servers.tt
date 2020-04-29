@@ -8,7 +8,7 @@
    <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="[% url %]">Click to refresh.</a></p>
 </div>
 <div class="row"><input id="filter" class="u-full-width" type="search" placeholder="(WIP!) Filter by anything&hellip;"></div>
-<table class="u-full-width" id="main">
+<table id="main" class="u-full-width">
    <thead>
       <tr class="info">
          <th>&#x1F30D;</th>
@@ -36,7 +36,7 @@
          <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
          [% END %]
       </tr>
-      <tr class="[% IF !s.info.embed %]hidden [% END %]stripe details" data-id="[% i.address %]_details">
+      <tr class="[% IF !s.info.embed %]hidden stripe [% END %]details" data-id="[% i.address %]_details">
          <td colspan="[% IF s.info.embed %]5[% ELSE %]7[% END %]">
             <div class="grid-container halves">
                <table>
@@ -89,6 +89,7 @@
                      [% END %]
                   </tbody>
                </table>
+               [% IF i.numplayers || i.numbots %]
                <table>
                   <thead>
                      <tr>
@@ -98,7 +99,6 @@
                      </tr>
                   </thead>
                   <tbody class="players">
-                     [% IF i.numplayers %]
                      [% p_sorted = i.teamplay ? ( i.scoreinfo.player.order ? i.players.nsort('score').nsort('team') : i.players.nsort('score').reverse.nsort('team') ) : ( i.scoreinfo.player.order ? i.players.nsort('score') : i.players.nsort('score').reverse ) %]
                      [% FOREACH p IN p_sorted %]
                      <tr[% IF i.teamplay %] [% IF p.team == 1 %]class="team1red"[% ELSIF p.team == 2 %]class="team2blue"[% ELSIF p.team == 3 %]class="team3yellow"[% ELSIF p.team == 4 %]class="team4pink"[% END %][% END %]>
@@ -107,10 +107,9 @@
                         <td>[% IF p.score == -666 %]<span title="spectator">spec</span>[% ELSIF p.score == -616 %]<span title="out of game">oog</span>[% ELSIF i.scoreinfo.player.label.match('(fastest|time)') %][% s2t(p.score) %][% ELSIF i.mode == 'LMS' %][% IF p.score > 255 || p.score == 0 %]-[% ELSE %][% ordinate(p.score) %][% END %][% ELSIF i.mode == 'CA' %][% dmg2k(p.score / 1000) %][% ELSIF i.mode == 'COOP' && i.mode2 == 'QUAKE' %][% p.score * -1 %][% ELSE %][% p.score %][% END %]</td>
                      </tr>
                      [% END %]
-                     [% END %]
                   </tbody>
                </table>
-               [% IF i.numplayers == 0 && i.numbots == 0 %]
+               [% ELSE %]
                <div><p>No Players.</p></div>
                [% END %]
             </div>

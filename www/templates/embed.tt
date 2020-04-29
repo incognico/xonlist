@@ -15,7 +15,7 @@
    <div class="grid-container full">
      <table>
         <thead>
-           <tr>
+           <tr class="info">
               <th>&#x1F30D;</th>
               <th>Name</th>
               <th>Type</th>

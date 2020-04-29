@@ -6,18 +6,25 @@ body {
 ::-webkit-scrollbar-track-piece { background-color: #fff; }
 
 td, th {
-  border-color: #E1E1E1;
+  border-color: #D1D1D1;
 }
 
 tr.stripe:nth-child(4n),
 tr.stripe:nth-child(4n-1)	{
-  background-color: rgb(245,245,245,0.5);
+  background-color: rgb(225, 225, 225, 0.5);
 }
 
 .button, input[type="button"] {
   color: #555;
 }
 
+.button.kek:hover {
+  color: #222;
+  border-color: #222;
+}
+
 input[type=search] {
+  color: #222;
   background-color: #fff;
+  border-color: #D1D1D1;
 }

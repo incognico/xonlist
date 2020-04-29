@@ -12,12 +12,12 @@
    <title>Xonotic Server Info</title>
 </head>
 <body>
-     <table class="u-full-width" id="main">
+     <table id="main">
         <thead>
            <tr>
               <th>&#x1F30D;</th>
               <th>Name</th>
-              <th class="center">Type</th>
+              <th>Type</th>
               <th>Map</th>
               <th>Players</th>
            </tr>

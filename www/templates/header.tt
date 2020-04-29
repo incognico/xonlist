@@ -7,17 +7,17 @@
    <!-- Meta Tags -->
    <meta http-equiv="content-type" content="text/html; charset=utf-8">
    <meta name="description" content="[% desc %]">
-   <meta name="viewport" content="width=device-width, initial-scale=0.4">
+   <meta name="viewport" content="width=device-width, initial-scale=0.35">
    <meta name="theme-color" content="#222">
    <meta name="application-name" content="XonList">
-   <meta name="msapplication-tooltip" content="Xonotic Server List.">
+   <meta name="msapplication-tooltip" content="Xonotic Server List">
    <meta name="msapplication-starturl" content="[% url %]/">
    <link rel="manifest" href="[% url %]/manifest.json">
    <link rel="modulepreload" href="[% url %]/js/dark-mode-toggle.min.mjs">
 
    <!-- CSS -->
    <link rel="stylesheet" href="[% url %]/css/normalize.css">
-   <link rel="stylesheet" href="[% url %]/css/skeleton.css">
+   <link rel="stylesheet" href="[% url %]/css/barebones.css">
    <link rel="stylesheet" href="[% url %]/css/common.css">
    <link rel="stylesheet" href="[% url %]/css/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
    <link rel="stylesheet" href="[% url %]/css/dark.css" media="(prefers-color-scheme: dark)">
@@ -31,3 +31,4 @@
    <title>[% title %]</title>
 </head>
 <body>
+<div class="grid-container full">

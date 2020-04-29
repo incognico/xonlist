@@ -11,14 +11,20 @@ td, th {
 
 tr.stripe:nth-child(4n),
 tr.stripe:nth-child(4n-1) {
-  background-color: rgb(24,24,24,0.5);
+  background-color: rgb(25, 25, 25, 0.5);
 }
 
 .button, input[type="button"] {
   color: #aaa;
 }
 
+.button.kek:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
 input[type=search] {
+  color: #fff;
   background-color: #222;
   border-color: #bbb;
 }

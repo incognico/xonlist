@@ -17,6 +17,7 @@ body {
   font-weight: normal;
   line-height: 1.4rem;
   text-rendering: optimizeLegibility;
+  --grid-max-width: 1200px;
 }
 
 .grid-container.full {

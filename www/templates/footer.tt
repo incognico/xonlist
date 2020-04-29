@@ -2,6 +2,7 @@
    <p>Currently querying both active Xonotic master servers:<br><i>dpmaster.deathmask.net</i> &amp; <i>dpmaster.tchr.no</i><br>Banned servers are not shown.</p>
    <p><a href="[% url %]/endpoint/json?pretty=1">JSON</a> &#x1F680; <a rel="noopener" href="https://github.com/incognico/xonlist">GitHub</a></p>
 </div>
+<div class="row"><img src="[% url %]/images/erebus.png" id="erebus" alt="erebus"></div>
 </div>
 <!-- page generation took [% measure(begintime) %] seconds -->
 <!-- JS -->
@@ -16,6 +17,5 @@
   }
 </script>
 <script src="[% url %]/js/main.js"></script>
-<div class="row"><img class="u-pull-right" src="[% url %]/images/erebus.png" id="erebus" alt="erebus"></div>
 </body>
 </html>

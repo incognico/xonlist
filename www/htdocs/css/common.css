@@ -16,12 +16,13 @@ body {
   font-style: normal;
   font-weight: normal;
   line-height: 1.4rem;
-  text-rendering: optimizeLegibility;
-  --grid-max-width: 1200px;
+  text-rendering: optimizeLegibility !important;
+  overflow-y: scroll;
+  --grid-max-width: 1020px;
 }
 
 .grid-container.full {
-   padding: 1rem;
+  padding: 1rem;
 }
 
 p {
@@ -119,7 +120,7 @@ td:last-child {
   position: fixed;
   right: -100px;
   bottom: -40px;
-  z-index: -999;
+  /*  z-index: -999; this breaks front subpixel rendering in chrome who knows why */
   opacity: 0.35;
   filter: alpha(opacity=35);
 }

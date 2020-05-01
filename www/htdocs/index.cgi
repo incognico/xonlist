@@ -256,10 +256,10 @@ for (@{$qstat}) {
       while (my ($k, $v) = splice(@tscores, 0, 2)) {
          if ($$vars{server}{$key}{scoreinfo}{team}{prefer} eq 'sec') {
             ($$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}},
-             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = split(',', $v);
+             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = int(split(',', $v));
          }
          else {
-            $$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}} = $v;
+            $$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}} = int($v);
          }
       }
    }
@@ -283,7 +283,7 @@ for (@{$qstat}) {
       $$_{name}  = formatnick($$_{name});
       $$_{team}  = 0 unless (defined $$_{team});
 
-      if ($$_{score} =~ /^-6[16]6$/ || $$_{name}  eq 'unconnected') {
+      if ($$_{score} == -666 || $$_{score} == -616 || $$_{name}  eq 'unconnected') {
          $$_{prio} = 2;
          $$_{team} = 0;
       }

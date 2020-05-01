@@ -1,6 +1,6 @@
    <div class="row u-align-left">
       <div class="u-pull-right u-align-right">
-         <p>made with &#x2764; by <a href="http://stats.xonotic.org/player/99876" rel"noopener">incognico</a><p>
+         <p>made with &#x2764; by <a href="http://stats.xonotic.org/player/99876" rel="noopener">incognico</a><p>
          <p><a href="[% url %]/endpoint/json?pretty=1">JSON</a> &#x1F680; <a rel="noopener" href="https://github.com/incognico/xonlist">GitHub</a></p>
       </div>
       <p>Currently querying both active Xonotic master servers:<br><i>dpmaster.deathmask.net</i> &amp; <i>dpmaster.tchr.no</i><br>Banned servers are not shown.</p>

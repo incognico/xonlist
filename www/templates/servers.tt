@@ -93,7 +93,7 @@
                <table>
                   <thead>
                      <tr>
-                        <th>Player</th>
+                        <th>Player Name</th>
                         <th>Ping</th>
                         <th>[% IF i.mode == 'CA' %]Damage[% ELSIF i.mode == 'COOP' && i.mode2 == 'QUAKE' %]Deaths[% ELSIF i.scoreinfo.player.label %][% i.scoreinfo.player.label.ucfirst %][% ELSE %]Score[% END %]</th>
                      </tr>

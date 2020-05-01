@@ -1,2 +1,4 @@
 RewriteEngine on
-RewriteRule ^api/json/?$ index.cgi?dest=json [L]
+RewriteRule ^endpoint/json/?$ index.cgi?dest=json [QSA,L]
+RewriteRule ^single/?(.+)$ index.cgi?dest=index&single=$1 [QSA,L]
+RewriteRule ^server/?(.+)$ index.cgi?dest=index&embed=$1 [QSA,L]

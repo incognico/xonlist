@@ -28,7 +28,7 @@
       <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] [% IF !s.info.embed %]hidden [% END %]empty[% END %] info">
          <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
          <td>[% i.realname %]</td>
-         <td title="[% i.gamedir %]">[% i.mode %]<br><span class="size0">([% i.mode2 %][% IF i.impure == 0 %]<wbr>+PURE[% END %])</span></td>
+         <td title="[% i.modefull %]">[% i.mode %]<br><span class="size0">([% i.mode2 %][% IF i.impure == 0 %]<wbr>+PURE[% END %])</span></td>
          <td[% IF i.map.length > 16 %] title="[% i.map %]"[% END %]>[% utrunc(i.map, 16) %]</td>
          <td>[% IF i.numplayers > 0 %]<b>[% i.numplayers %]</b>[% ELSE %][% i.numplayers %][% END %]<span class="size1">/[% i.maxplayers %]</span></td>
          <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %];toggleconsole" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
@@ -49,9 +49,9 @@
                   <tbody class="details2">
                      <tr>
                         <td>Address:</td>
-                        <td><a class="serverlink" href="[% url %]/server/[% i.address %]" title="Permanent link to this servers information">[% i.address %]</a></td>
+                        <td><a class="hlink" href="[% url %]/server/[% i.address %]" title="Permanent link to this servers information">[% i.address %]</a></td>
                      </tr>
-                     <tr>
+                     <tr title="[% i.gamedir %]">
                         <td>Game Version:</td>
                         <td>[% i.version %]</td>
                      </tr>
@@ -60,7 +60,7 @@
                         <td>[% IF i.enc == 3 %]Required[% ELSIF i.enc == 2 %]Requested[% ELSIF i.enc == 1 %]Supported[% ELSIF i.enc == 0 %]Not Supported[% END %]</td>
                      </tr>
                      <tr>
-                        <td>Player Statistics:</td>
+                        <td><a class="hlink" href="http://stats.xonotic.org/" rel="noopener">Player Statistics:</a></td>
                         <td>[% IF i.stats == 0 %]Not Supported[% ELSE %]Supported[% END %]</td>
                      </tr>
                      [% IF i.fballowed == 0 %]

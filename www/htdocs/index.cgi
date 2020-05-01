@@ -191,6 +191,26 @@ for (read_lines($checkupdate)) {
 my $qstat = decode_json(read_text($qstat_json));
 my $gi    = MaxMind::DB::Reader->new(file => $geodb);
 
+my $modes = {
+   'AS'   => 'Assault',
+   'CA'   => 'Clan Arena',
+   'COOP' => 'Cooperative',
+   'CTF'  => 'Capture the Flag',
+   'CTS'  => 'Race - Complete The Stage',
+   'DM'   => 'Deathmatch',
+   'DOM'  => 'Domination',
+   'DUEL' => 'Duel',
+   'FT'   => 'Freeze Tag',
+   'INV'  => 'Invasion',
+   'KA'   => 'Keepaway',
+   'KH'   => 'Key Hunt',
+   'LMS'  => 'Last Man Standing',
+   'NB'   => 'Nexball',
+   'ONS'  => 'Onslaught',
+   'RACE' => 'Race',
+   'TDM'  => 'Team Death Match',
+};
+
 my ($totalplayers, $totalservers, $activeservers, $totalbots, $vars) = (0, 0, 0, 0);
 
 for (@{$qstat}) {
@@ -217,6 +237,7 @@ for (@{$qstat}) {
    $$vars{server}{$key}{impure}    = int(substr($impure, 1));
    $$vars{server}{$key}{slots}     = int(substr($slots, 1));
    $$vars{server}{$key}{mode}      = uc($mode) eq 'DM' && $$_{slots} + $$_{numplayers} - $$_{numspectators} == 2 ? 'DUEL' : uc($mode);
+   $$vars{server}{$key}{modefull}  = $$modes{$$vars{server}{$key}{mode}};
    $$vars{server}{$key}{fballowed} = substr($flags, 1) & 1 ? 1 : 0;
    $$vars{server}{$key}{teamplay}  = substr($flags, 1) & 2 ? 1 : 0;
    $$vars{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;

@@ -55,7 +55,7 @@ table {
 }
 
 @media (max-width: 720px) {
-   .button-primary { padding: 0 6px; }
+  .button-primary { padding: 0 6px; }
 }
 
 .center,
@@ -83,6 +83,10 @@ tr.info:not(.empty) td:nth-child(2) {
   font-size: 1.4rem;
 }
 
+th {
+  font-variant: small-caps;
+}
+
 .team1red {
   color: #E02130;
   /* color: #F54C00; */
@@ -105,6 +109,10 @@ tr.info:not(.empty) td:nth-child(2) {
 
 a {
   text-decoration: none;
+}
+
+.serverlink {
+  color: inherit;
 }
 
 input[type="search"]::-webkit-search-cancel-button {

@@ -7,12 +7,12 @@
    <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" title="Xonotic - The Free and Fast Arena Shooter" href="https://xonotic.org/">Xonotic</a> on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
    <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="[% url %]">Click to refresh.</a></p>
 </div>
-<div class="row"><input id="filter" class="u-full-width" type="search" placeholder="(WIP!) Filter by anything&hellip;"></div>
+<div class="row"><input id="filter" class="u-full-width" type="search" placeholder="Filter by Server Name, Game Type or Map Name&hellip;"></div>
 <table id="main" class="u-full-width">
    <thead>
       <tr class="info">
          <th>&#x1F30D;</th>
-         <th>Name</th>
+         <th>Server Name</th>
          <th>Type</th>
          <th>Map</th>
          <th>Players</th>
@@ -120,6 +120,6 @@
    </tbody>
 </table>
 <div class="row">
-   <p><button class="button kek u-full-width" data-id="tempty">Show empty servers</button></p>
+   <p><button class="button u-full-width tempty" data-id="tempty">Toggle empty servers</button></p>
 </div>
 [% END %]

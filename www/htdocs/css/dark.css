@@ -18,7 +18,8 @@ tr.stripe:nth-child(4n-1) {
   color: #aaa;
 }
 
-.button.kek:hover {
+.button.tempty:hover,
+.button.tempty:focus {
   color: #fff;
   border-color: #fff;
 }

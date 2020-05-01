@@ -256,7 +256,7 @@ for (@{$qstat}) {
       while (my ($k, $v) = splice(@tscores, 0, 2)) {
          if ($$vars{server}{$key}{scoreinfo}{team}{prefer} eq 'sec') {
             ($$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}},
-             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = int(split(',', $v));
+             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = map(int, split(',', $v));
          }
          else {
             $$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}} = int($v);

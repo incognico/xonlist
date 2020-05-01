@@ -23,6 +23,7 @@ body {
 
 .grid-container.full {
   padding: 1rem;
+  z-index: 100;
 }
 
 p {
@@ -124,7 +125,7 @@ td:last-child {
   position: fixed;
   right: -100px;
   bottom: -40px;
-  /*  z-index: -999; this breaks front subpixel rendering in chrome who knows why */
   opacity: 0.35;
   filter: alpha(opacity=35);
+  z-index: 10;
 }

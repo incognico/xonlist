@@ -279,7 +279,21 @@ for (@{$qstat}) {
    $$vars{server}{$key}{realname} = decode_utf8(pack('H*', $$_{name}));
    $$vars{server}{$key}{map}      = decode_utf8(pack('H*', $$_{map}));
 
-   $$_{name} = formatnick($$_{name}) for (@{$$vars{server}{$key}{players}});
+   for (@{$$vars{server}{$key}{players}}) {
+      $$_{name}  = formatnick($$_{name});
+      $$_{team}  = 0 unless (defined $$_{team});
+
+      if ($$_{score} =~ /^-6[16]6$/ || $$_{name}  eq 'unconnected') {
+         $$_{prio} = 2;
+         $$_{team} = 0;
+      }
+      elsif ($$_{score} == 0 && $$vars{server}{$key}{scoreinfo}{player}{label} =~ /^(fastest|time)$/ || $$vars{server}{$key}{teamplay} && $$_{team} == 0) {
+         $$_{prio} = 1;
+      }
+      else {
+         $$_{prio} = 0;
+      }
+   }
 }
 
 my $fstat = (stat($qstat_json))[9];

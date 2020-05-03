@@ -197,7 +197,7 @@ my $modes = {
    'COOP' => 'Cooperative',
    'CQ'   => 'Conquest',
    'CTF'  => 'Capture the Flag',
-   'CTS'  => 'Race - Complete The Stage',
+   'CTS'  => 'Race - Complete the Stage',
    'DM'   => 'Deathmatch',
    'DOM'  => 'Domination',
    'DUEL' => 'Duel',
@@ -211,7 +211,7 @@ my $modes = {
    'NB'   => 'Nexball',
    'ONS'  => 'Onslaught',
    'RACE' => 'Race',
-   'TDM'  => 'Team Death Match',
+   'TDM'  => 'Team Deathmatch',
 };
 
 my ($totalplayers, $totalservers, $activeservers, $totalbots, $vars) = (0, 0, 0, 0);

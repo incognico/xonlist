@@ -109,8 +109,11 @@
                      [% END %]
                   </tbody>
                </table>
+               [% IF p_sorted.size == 0 %]
+               <div><p><b>Error querying player information &#x1F61E;</b></p></div>
+               [% END %]
                [% ELSE %]
-               <div><p><b>No Players.</b></p></div>
+               <div><p><b>No Players &#x1F61E;</b></p></div>
                [% END %]
             </div>
          </td>

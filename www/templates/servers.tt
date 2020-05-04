@@ -28,7 +28,7 @@
       <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] [% IF !s.info.embed %]hidden [% END %]empty[% END %] info">
          <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
          <td>[% i.realname %]</td>
-         <td title="[% i.modefull %]">[% i.mode %]<br><span class="size0">([% i.mode2 %][% IF i.impure == 0 %]<wbr>+PURE[% END %])</span></td>
+         <td title="[% i.modefull %]">[% i.mode %]<br><span class="size0">[% IF i.impure == 0 %]OFFICIAL[% ELSIF i.mode2 != 'VANILLA' %][% i.mode2 %][% ELSE %]MODIFIED</span>[% END %]</td>
          <td[% IF i.map.length > 16 %] title="[% i.map %]"[% END %]>[% utrunc(i.map, 16) %]</td>
          <td>[% IF i.numplayers > 0 %]<b>[% i.numplayers %]</b>[% ELSE %][% i.numplayers %][% END %]<span class="size1">/[% i.maxplayers %]</span></td>
          <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %];toggleconsole" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>

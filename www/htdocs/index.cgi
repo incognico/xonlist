@@ -175,10 +175,9 @@ sub score2time {
 
    return 0 unless ($score =~ /^[0-9]+/);
 
-   my $tsec = substr($score, -2);
-   my $sec  = substr($score, 0, -2);
+   my $sec = substr($score, 0, -2, '');
 
-   return $sec . '.' . $tsec . ' sec.';
+   return $sec . '.' . $score . ' sec.';
 }
 
 ###
@@ -192,26 +191,33 @@ my $qstat = decode_json(read_text($qstat_json));
 my $gi    = MaxMind::DB::Reader->new(file => $geodb);
 
 my $modes = {
-   'AS'   => 'Assault',
-   'CA'   => 'Clan Arena',
-   'COOP' => 'Cooperative',
-   'CQ'   => 'Conquest',
-   'CTF'  => 'Capture the Flag',
-   'CTS'  => 'Race - Complete the Stage',
-   'DM'   => 'Deathmatch',
-   'DOM'  => 'Domination',
-   'DUEL' => 'Duel',
-   'FT'   => 'Freeze Tag',
-   'INF'  => 'Infection',
-   'INV'  => 'Invasion',
-   'JB'   => 'Jailbreak',
-   'KA'   => 'Keepaway',
-   'KH'   => 'Key Hunt',
-   'LMS'  => 'Last Man Standing',
-   'NB'   => 'Nexball',
-   'ONS'  => 'Onslaught',
-   'RACE' => 'Race',
-   'TDM'  => 'Team Deathmatch',
+   'ARENA'     => 'Duel Arena',
+   'AS'        => 'Assault',
+   'CA'        => 'Clan Arena',
+   'CONQUEST'  => 'Conquest',
+   'COOP'      => 'Cooperative',
+   'CQ'        => 'Conquest',
+   'CTF'       => 'Capture the Flag',
+   'CTS'       => 'Race - Complete the Stage',
+   'DM'        => 'Deathmatch',
+   'DOM'       => 'Domination',
+   'DOTC'      => 'Defense of the Core (MOBA)',
+   'DUEL'      => 'Duel',
+   'FT'        => 'Freeze Tag',
+   'INF'       => 'Infection',
+   'INV'       => 'Invasion',
+   'JAILBREAK' => 'Jailbreak',
+   'JB'        => 'Jailbreak',
+   'KA'        => 'Keepaway',
+   'KH'        => 'Key Hunt',
+   'LMS'       => 'Last Man Standing',
+   'NB'        => 'Nexball',
+   'ONS'       => 'Onslaught',
+   'RACE'      => 'Race',
+   'RUNEMATCH' => 'Runematch',
+   'SNAFU'     => '???',
+   'TDM'       => 'Team Deathmatch',
+   'VIP'       => 'Very Important Player',
 };
 
 my ($totalplayers, $totalservers, $activeservers, $totalbots, $vars) = (0, 0, 0, 0);
@@ -298,16 +304,15 @@ for (@{$qstat}) {
 
    my $rec = $gi->record_for_address((split(':', $$_{address}))[0]);
    $$vars{server}{$key}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
-   #$$vars{server}{$key}{geo} = 'AU' if ($$vars{server}{$key}{realname} =~ /australi[as]/i); # shitty workaround
 
    $$vars{server}{$key}{realname} = decode_utf8(pack('H*', $$_{name}));
    $$vars{server}{$key}{map}      = decode_utf8(pack('H*', $$_{map}));
 
    for (@{$$vars{server}{$key}{players}}) {
-      $$_{name}  = formatnick($$_{name});
-      $$_{team}  = 0 unless (defined $$_{team});
+      $$_{name} = formatnick($$_{name});
+      $$_{team} = 0 unless (defined $$_{team});
 
-      if ($$_{score} == -666 || $$_{score} == -616 || $$_{name}  eq 'unconnected') {
+      if ($$_{score} == -666 || $$_{score} == -616 || $$_{name} eq 'unconnected') {
          $$_{prio} = 2;
          $$_{team} = 0;
       }

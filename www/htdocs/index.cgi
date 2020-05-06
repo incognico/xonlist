@@ -214,6 +214,8 @@ my $modes = {
    'NB'        => 'Nexball',
    'ONS'       => 'Onslaught',
    'RACE'      => 'Race',
+   'RC'        => 'Race',
+   'RUNE'      => 'Runematch',
    'RUNEMATCH' => 'Runematch',
    'SNAFU'     => '???',
    'TDM'       => 'Team Deathmatch',
@@ -241,7 +243,7 @@ for (@{$qstat}) {
    $$vars{server}{$key}{enc} = int($enc);
 
    # gametype:version:P<pure>:S<slots>:F<flags>:M<mode>::plabel,plabel:tlabel,tlabel:teamid:tscore,tscore:teamid:tscore,tscore
-   my ($mode, $ver, $impure, $slots, $flags, $mode2, undef, $pscoreinfo, $tscoreinfo, @tscores) = split(':', $$_{rules}{qcstatus});
+   my ($mode, $ver, $impure, $slots, $flags, $mode2, undef, $pscoreinfo, $tscoreinfo, @tscores) = split(/:/, $$_{rules}{qcstatus});
    $$vars{server}{$key}{version}   = $ver;
    $$vars{server}{$key}{impure}    = int(substr($impure, 1));
    $$vars{server}{$key}{slots}     = int(substr($slots, 1));
@@ -286,7 +288,7 @@ for (@{$qstat}) {
       while (my ($k, $v) = splice(@tscores, 0, 2)) {
          if ($$vars{server}{$key}{scoreinfo}{team}{prefer} eq 'sec') {
             ($$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}},
-             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = map(int, split(',', $v));
+             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = map { int } split(/,/, $v);
          }
          else {
             $$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}} = int($v);
@@ -302,7 +304,7 @@ for (@{$qstat}) {
    $$vars{server}{$key}{gamedir} = $$vars{server}{$key}{rules}{modname};
    delete $$vars{server}{$key}{rules};
 
-   my $rec = $gi->record_for_address((split(':', $$_{address}))[0]);
+   my $rec = $gi->record_for_address((split(/:/, $$_{address}))[0]);
    $$vars{server}{$key}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
 
    $$vars{server}{$key}{realname} = decode_utf8(pack('H*', $$_{name}));

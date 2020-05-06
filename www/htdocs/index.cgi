@@ -239,7 +239,7 @@ for (@{$qstat}) {
    $$vars{server}{$key}{numplayers} -= $$_{rules}{bots};
 
    my $enc;
-   ($enc, $$vars{server}{$key}{d0id}) = (defined $$_{rules}{d0_blind_id} ? split(' ', $$_{rules}{d0_blind_id}) : 0, 0);
+   ($enc, $$vars{server}{$key}{d0id}) = (defined $$_{rules}{d0_blind_id} ? split(/ /, $$_{rules}{d0_blind_id}) : 0, 0);
    $$vars{server}{$key}{enc} = int($enc);
 
    # gametype:version:P<pure>:S<slots>:F<flags>:M<mode>::plabel,plabel:tlabel,tlabel:teamid:tscore,tscore:teamid:tscore,tscore
@@ -318,7 +318,7 @@ for (@{$qstat}) {
          $$_{prio} = 2;
          $$_{team} = 0;
       }
-      elsif ($$_{score} == 0 && $$vars{server}{$key}{scoreinfo}{player}{label} =~ /^(fastest|time)$/ || $$vars{server}{$key}{teamplay} && $$_{team} == 0) {
+      elsif ($$_{score} == 0 && ($$vars{server}{$key}{scoreinfo}{player}{label} && $$vars{server}{$key}{scoreinfo}{player}{label} =~ /^(fastest|time)$/) || $$vars{server}{$key}{teamplay} && $$_{team} == 0) {
          $$_{prio} = 1;
       }
       else {

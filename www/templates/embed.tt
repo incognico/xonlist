@@ -28,6 +28,9 @@
            [% INCLUDE servers.tt %]
         </tbody>
      </table>
+   [% IF !s.server %]
+   <div><p>Server offline or not existing &#x1F61E;</p></div>
+   [% END %]
    <div><p class="size1">data from <a rel="noopener" href="https://xonotic.lifeisabug.com">xonotic.lifeisabug.com</a></p></div>
    </div>
 <!-- JS -->

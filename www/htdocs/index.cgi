@@ -11,12 +11,11 @@ use Time::HiRes qw(gettimeofday tv_interval);
 my $begintime;
 BEGIN { $begintime = [gettimeofday()]; }
 
-use CGI qw(header param -utf8);
+use CGI qw(header param multi_param -utf8);
 use CGI::Carp qw(fatalsToBrowser warningsToBrowser);
 use Encode::Simple qw(encode_utf8 decode_utf8);
 use File::Slurper qw(read_lines read_text);
 use JSON;
-use Lingua::EN::Numbers::Ordinate;
 use MaxMind::DB::Reader;
 use Template::AutoFilter;
 use Unicode::Truncate;
@@ -44,12 +43,12 @@ croak("template folder $ttopts{INCLUDE_PATH} does not exist") unless (-e $ttopts
 
 my $tt = Template::AutoFilter->new(\%ttopts);
 
+my @qs      = multi_param('s');
 my $qdest   = param('dest')   || 'index';
-my $qsingle = param('single') || 0;
 my $qpretty = param('pretty') || 0;
 my $qembed  = param('embed')  || 0;
 
-$qsingle = $qembed if ($qembed);
+@qs = grep { length && /[\.\d:]/ } @qs;
 
 ###
 
@@ -180,6 +179,12 @@ sub score2time {
    return $sec . '.' . $score . ' sec.';
 }
 
+sub ordinate {
+   my $num = shift;
+
+   return $num . ($num =~ /(^|[^1])([123])$/ ? qw/st nd rd/[$2-1] : 'th');
+}
+
 ###
 
 my @banned;
@@ -226,7 +231,7 @@ my ($totalplayers, $totalservers, $activeservers, $totalbots, $vars) = (0, 0, 0,
 
 for (@{$qstat}) {
    next unless ($$_{hostname} && $$_{status} eq 'online');
-   next if ($qsingle && $$_{address} ne $qsingle);
+   next if (@qs && !($$_{address} ~~ @qs));
    next if ($$_{rules}{gameversion} > 65535);
    next if ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
 
@@ -325,6 +330,8 @@ for (@{$qstat}) {
          $$_{prio} = 0;
       }
    }
+
+   last if $qembed;
 }
 
 my $fstat = (stat($qstat_json))[9];
@@ -345,11 +352,11 @@ sub page_index {
    $$ttvars{s2t}      = \&score2time;
    $$ttvars{utrunc}   = \&truncate_egc;
 
-   $$vars{info}{single} = $qsingle ? 1 : 0;
-   $$vars{info}{embed}  = $qembed  ? 1 : 0;
+   $$vars{info}{s}     = @qs ? 1 : 0;
+   $$vars{info}{embed} = $qembed;
    $$ttvars{s} = $vars;
 
-   $qsingle ? ( $qembed ? process('embed') : process('servers') ) : process('xonlist');
+   @qs ? ( $qembed ? process('embed') : process('servers') ) : process('xonlist');
 
    return;
 }

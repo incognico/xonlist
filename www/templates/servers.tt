@@ -1,6 +1,6 @@
 [% USE format %]
 [% dmg2k = format('%.2f k') %]
-[% IF !s.info.single %]
+[% IF !s.info.s %]
 <div class="row u-align-left">
    <h4>[% title %]</h4>
    <aside class="u-pull-right"><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
@@ -119,7 +119,7 @@
          </td>
       </tr>
       [% END %]
-[% IF !s.info.single %]
+[% IF !s.info.s %]
    </tbody>
 </table>
 <div class="row">

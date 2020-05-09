@@ -1,11 +1,13 @@
 #!/usr/bin/env perl
 
+use 5.28.0;
+
 use utf8;
 use strict;
 use warnings;
 
-use 5.16.0;
-no warnings 'experimental::smartmatch';
+use feature 'signatures';
+no warnings qw(experimental::signatures experimental::smartmatch);
 
 use Time::HiRes qw(gettimeofday tv_interval);
 my $begintime;
@@ -52,16 +54,11 @@ my $qembed  = param('embed')  || 0;
 
 ###
 
-sub measure {
-   my $time = shift || $begintime;
-
-   return tv_interval($time);
+sub measure ($time = $begintime) {
+   return tv_interval([$time]);
 }
 
-sub process {
-   my $tmpl = shift || 'xonlist';
-   my $type = shift || 'text/html';
-
+sub process ($tmpl = 'xonlist', $type = 'text/html') {
    if ($debug) {
       require Data::Dumper;
       Data::Dumper->import;
@@ -145,8 +142,7 @@ my @qfont_unicode_glyphs = (
    "\N{U+007C}",     "\N{U+007D}",     "\N{U+007E}",     "\N{U+25C0}"
 );
 
-sub qfont_decode {
-   my $qstr = shift // '';
+sub qfont_decode ($qstr = '') {
    my @chars;
 
    for (split('', $qstr)) {
@@ -161,27 +157,22 @@ sub qfont_decode {
    return join '', @chars;
 }
 
-sub formatnick {
-   my $up = pack 'H*', shift // '';
-
+sub formatnick ($p) {
+   my $up = pack('H*', $p);
    $up =~ s/\^(\d|x[\dA-Fa-f]{3})//g;
 
    return qfont_decode(decode_utf8($up));
 }
 
-sub score2time {
-   my $score = shift || return '-';
-
-   return 0 unless ($score =~ /^[0-9]+/);
+sub score2time ($score) {
+   return '-' if ($score == 0);
 
    my $sec = substr($score, 0, -2, '');
 
    return $sec . '.' . $score . ' sec.';
 }
 
-sub ordinate {
-   my $num = shift;
-
+sub ordinate ($num) {
    return $num . ($num =~ /(^|[^1])([123])$/ ? qw/st nd rd/[$2-1] : 'th');
 }
 
@@ -229,7 +220,7 @@ my $modes = {
 
 my ($totalplayers, $totalservers, $activeservers, $totalbots, $vars) = (0, 0, 0, 0);
 
-for (@{$qstat}) {
+for ($qstat->@*) {
    next unless ($$_{hostname} && $$_{status} eq 'online');
    next if (@qs && !($$_{address} ~~ @qs));
    next if ($$_{rules}{gameversion} > 65535);
@@ -259,7 +250,7 @@ for (@{$qstat}) {
    $$vars{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
    $$vars{server}{$key}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
 
-   my $scoreinfo_re = qr/^(.+?)([<!]*?)(?:,(.+?)([<!]*?))?$/;
+   my $scoreinfo_re = qr/^([a-z]+)([!<]+)(?:,([a-z]+)([!<]+))?$/;
 
    if (defined $pscoreinfo && $pscoreinfo =~ /$scoreinfo_re/) {
       $$vars{server}{$key}{scoreinfo}{player}{label} = $1;
@@ -268,7 +259,7 @@ for (@{$qstat}) {
       # secondary player score is not active in xon yet (fullstatus)
    }
 
-   if (defined $tscoreinfo && $tscoreinfo =~ /$scoreinfo_re/g) {
+   if (defined $tscoreinfo && $tscoreinfo =~ /$scoreinfo_re/) {
       $$vars{server}{$key}{scoreinfo}{team}{pri}{label} = $1;
       $$vars{server}{$key}{scoreinfo}{team}{pri}{flags} = $2;
       $$vars{server}{$key}{scoreinfo}{team}{pri}{order} = $2 =~ /</ ? 1 : 0;
@@ -293,7 +284,7 @@ for (@{$qstat}) {
       while (my ($k, $v) = splice(@tscores, 0, 2)) {
          if ($$vars{server}{$key}{scoreinfo}{team}{prefer} eq 'sec') {
             ($$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}},
-             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = map { int } split(/,/, $v);
+             $$vars{server}{$key}{scoreinfo}{team}{sec}{score}{$$teams{$k}}) = map { int } split(/,/, $v, 2);
          }
          else {
             $$vars{server}{$key}{scoreinfo}{team}{pri}{score}{$$teams{$k}} = int($v);
@@ -315,7 +306,7 @@ for (@{$qstat}) {
    $$vars{server}{$key}{realname} = decode_utf8(pack('H*', $$_{name}));
    $$vars{server}{$key}{map}      = decode_utf8(pack('H*', $$_{map}));
 
-   for (@{$$vars{server}{$key}{players}}) {
+   for ($$vars{server}{$key}{players}->@*) {
       $$_{name} = formatnick($$_{name});
       $$_{team} = 0 unless (defined $$_{team});
 

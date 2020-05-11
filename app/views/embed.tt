@@ -1,0 +1,22 @@
+[% PROCESS header.tt %]
+     <table>
+        <thead>
+           <tr class="info">
+              <th>&#x1F30D;</th>
+              <th>Server Name</th>
+              <th>Type</th>
+              <th>Map</th>
+              <th>Players</th>
+              <th></th>
+           </tr>
+        </thead>
+        <tbody>
+           [% PROCESS servers.tt %]
+        </tbody>
+     </table>
+   [% IF !s.server %]
+   <div><p>Server offline or not existing &#x1F61E;</p></div>
+   [% END %]
+   <div><p class="size1">data from <a rel="noopener" href="https://[% settings.domain %]">https://[% settings.domain %]</a></p></div>
+   </div>
+[% PROCESS footer.tt %]

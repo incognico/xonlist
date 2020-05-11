@@ -1,11 +1,11 @@
 [% USE format %]
 [% dmg2k = format('%.2f k') %]
-[% IF !s.info.s %]
+[% IF !selection %]
 <div class="row u-align-left">
-   <h4>[% title %]</h4>
+   <h4>[% settings.title %]</h4>
    <aside class="u-pull-right"><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
    <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" title="Xonotic - The Free and Fast Arena Shooter" href="https://xonotic.org/">Xonotic</a> on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
-   <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="[% url %]">Click to refresh.</a></p>
+   <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="[% domain %]/">Click to refresh.</a></p>
 </div>
 <div class="row"><input id="filter" class="u-full-width" type="search" placeholder="Filter by Server Name, Game Type or Map Name&hellip;"></div>
 <table id="main" class="u-full-width">
@@ -17,7 +17,7 @@
          <th>Map</th>
          <th>Players</th>
          <th></th>
-         [% IF !s.info.embed %]
+         [% IF !embed %]
          <th></th>
          [% END %]
       </tr>
@@ -25,19 +25,19 @@
    <tbody>
 [% END %]
       [% FOREACH i IN s.server.values.sort('realname').reverse.nsort('numplayers').reverse %]
-      <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] [% IF !s.info.embed %]hidden [% END %]empty[% END %] info">
+      <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] [% IF !embed %]hidden [% END %]empty[% END %] info">
          <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
          <td>[% i.realname %]</td>
          <td title="[% i.modefull %]">[% i.mode %]<br><span class="size0">[% IF i.impure == 0 %]OFFICIAL[% ELSIF i.mode2 != 'VANILLA' %][% i.mode2 %][% ELSE %]MODIFIED</span>[% END %]</td>
          <td[% IF i.map.length > 16 %] title="[% i.map %]"[% END %]>[% utrunc(i.map, 16) %]</td>
          <td>[% IF i.numplayers > 0 %]<b>[% i.numplayers %]</b>[% ELSE %][% i.numplayers %][% END %]<span class="size1">/[% i.maxplayers %]</span></td>
          <td><button class="button button-small clipboard" data-clipboard-text="connect [% i.address %];toggleconsole" title="Copy console connect command to clipboard (Use CTRL+V in the Xonotic console and hit return to connect)">&#x1f517;</button></td>
-         [% IF !s.info.embed %]
+         [% IF !embed %]
          <td><button class="button-primary" data-id="[% i.address %]">Details</button></td>
          [% END %]
       </tr>
-      <tr class="[% IF !s.info.embed %]hidden stripe [% END %]details" data-id="[% i.address %]_details">
-         <td colspan="[% IF s.info.embed %]6[% ELSE %]7[% END %]">
+      <tr class="[% IF !embed %]hidden stripe [% END %]details" data-id="[% i.address %]_details">
+         <td colspan="[% IF embed %]6[% ELSE %]7[% END %]">
             <div class="grid-container halves">
                <table>
                   <thead>
@@ -49,7 +49,7 @@
                   <tbody class="details2">
                      <tr>
                         <td>Address:</td>
-                        <td><a class="hlink" href="[% url %]/server/[% i.address %]" title="Permanent link to this servers information">[% i.address %]</a></td>
+                        <td><a class="hlink" href="[% domain %]/server/[% i.address %]" title="Permanent link to this servers information">[% i.address %]</a></td>
                      </tr>
                      <tr title="[% i.gamedir %]">
                         <td>Game Version:</td>
@@ -119,7 +119,7 @@
          </td>
       </tr>
       [% END %]
-[% IF !s.info.s %]
+[% IF !selection %]
    </tbody>
 </table>
 <div class="row">

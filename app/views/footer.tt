@@ -1,0 +1,14 @@
+<!-- JS -->
+<script src="[% domain %]/js/dark-mode-toggle.min.js" type="module"></script>
+<script src="[% domain %]/js/jquery-3.5.0.slim.min.js"></script>
+<script src="[% domain %]/js/clipboard.min.js"></script>
+<script>
+  var clipboard = new ClipboardJS('.clipboard');
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('[% domain %]/service-worker.js');
+  }
+</script>
+<script src="[% domain %]/js/main.js"></script>
+</body>
+</html>

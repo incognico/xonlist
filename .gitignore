@@ -1,0 +1,4 @@
+*.log
+*.tcc
+app/files/
+app/public/crbug/

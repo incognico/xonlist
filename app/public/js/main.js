@@ -11,7 +11,7 @@ $("button").click((event)=>{
   const id = event.target.dataset.id;
   if (id == 'tempty') {
      $('tr.empty').toggle();
-     $('.kek').remove();
+     $('tempty').blur();
   }
   else {
     $('tr[data-id="'+id+'_details"]').toggle();

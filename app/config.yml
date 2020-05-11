@@ -1,0 +1,20 @@
+appname: "xonlist"
+behind_proxy: 1
+charset: "UTF-8"
+desc: "Server List for the ArenaFPS game Xonotic. Current servers, players, teams, scores & more online."
+domain: "xonotic.lifeisabug.com"
+engines:
+  template:
+    template_autoFilter:
+      AUTO_FILTER: "html_entity"
+      COMPILE_DIR: "/tmp/tcc"
+      COMPILE_EXT: ".tcc"
+      POST_CHOMP: 2
+      PRE_CHOMP: 2
+      end_tag: "%]"
+      start_tag: "[%"
+environment: "production"
+filedir: "/srv/www/xonotic.lifeisabug.com/app/files"
+geodb: "/home/k/GeoLite2-City.mmdb"
+template: "template_autoFilter"
+title: "Xonotic Server List"

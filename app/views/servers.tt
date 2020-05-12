@@ -5,7 +5,7 @@
    <h4>[% settings.title %]</h4>
    <aside class="u-pull-right"><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
    <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" title="Xonotic - The Free and Fast Arena Shooter" href="https://xonotic.org/">Xonotic</a> on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
-   <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="[% domain %]/">Click to refresh.</a></p>
+   <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="https://[% settings.domain %]/">Click to refresh.</a></p>
 </div>
 <div class="row"><input id="filter" class="u-full-width" type="search" placeholder="Filter by Server Name, Game Type or Map Name&hellip;"></div>
 <table id="main" class="u-full-width">
@@ -49,7 +49,7 @@
                   <tbody class="details2">
                      <tr>
                         <td>Address:</td>
-                        <td><a class="hlink" href="[% domain %]/server/[% i.address %]" title="Permanent link to this servers information">[% i.address %]</a></td>
+                        <td><a class="hlink" href="https://[% settings.domain %]/server/[% i.address %]" title="Permanent link to this servers information">[% i.address %]</a></td>
                      </tr>
                      <tr title="[% i.gamedir %]">
                         <td>Game Version:</td>

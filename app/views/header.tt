@@ -11,21 +11,21 @@
    <meta name="theme-color" content="#222">
    <meta name="application-name" content="XonList">
    <meta name="msapplication-tooltip" content="Xonotic Server List">
-   <meta name="msapplication-starturl" content="[% domain %]/">
-   <link rel="manifest" href="[% domain %]/manifest.json">
-   <link rel="modulepreload" href="[% domain %]/js/dark-mode-toggle.min.js">
+   <meta name="msapplication-starturl" content="https://[% settings.domain %]/">
+   <link rel="manifest" href="https://[% settings.domain %]/manifest.json">
+   <link rel="modulepreload" href="https://[% settings.domain %]/js/dark-mode-toggle.min.js">
 
    <!-- CSS -->
-   <link rel="stylesheet" href="[% domain %]/css/normalize.css">
-   <link rel="stylesheet" href="[% domain %]/css/barebones.min.css">
-   <link rel="stylesheet" href="[% domain %]/css/common.css">
-   <link rel="stylesheet" href="[% domain %]/css/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
-   <link rel="stylesheet" href="[% domain %]/css/dark.css" media="(prefers-color-scheme: dark)">
-   <link rel="stylesheet" href="[% domain %]/css/flags.css">
+   <link rel="stylesheet" href="https://[% settings.domain %]/css/normalize.css">
+   <link rel="stylesheet" href="https://[% settings.domain %]/css/barebones.min.css">
+   <link rel="stylesheet" href="https://[% settings.domain %]/css/common.css">
+   <link rel="stylesheet" href="https://[% settings.domain %]/css/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
+   <link rel="stylesheet" href="https://[% settings.domain %]/css/dark.css" media="(prefers-color-scheme: dark)">
+   <link rel="stylesheet" href="https://[% settings.domain %]/css/flags.css">
 
    <!-- Icons -->
-   <link rel="icon" href="[% domain %]/images/xon96.png" type="image/png">
-   <link rel="apple-touch-icon" href="[% domain %]/images/xon180.png">
+   <link rel="icon" href="https://[% settings.domain %]/images/xon96.png" type="image/png">
+   <link rel="apple-touch-icon" href="https://[% settings.domain %]/images/xon180.png">
 
    <!-- Title -->
    <title>[% settings.title %]</title>

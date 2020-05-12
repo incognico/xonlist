@@ -13,7 +13,6 @@ use Dancer2 ':nopragmas';
 use Encode::Simple qw(encode_utf8 decode_utf8);
 use File::Slurper qw(read_lines read_text);
 use MaxMind::DB::Reader;
-use Template::AutoFilter;
 use Unicode::Truncate;
 
 our $VERSION = '0.1';
@@ -51,6 +50,13 @@ my $modes = {
    'SNAFU'     => '???',
    'TDM'       => 'Team Deathmatch',
    'VIP'       => 'Very Important Player',
+};
+
+my $teams = {
+    5 => 1, # red
+   14 => 2, # blue
+   13 => 3, # yellow
+   10 => 4, # pink
 };
 
 my @qfont_unicode_glyphs = (
@@ -203,36 +209,29 @@ sub parse_list ()
       $$s{server}{$key}{stats}     = substr($flags, 1) & 4 ? 1 : 0;
       $$s{server}{$key}{mode2}     = $mode2 eq 'MXonotic' ? 'VANILLA' : uc(substr($mode2, 1));
 
-      my $scoreinfo_re = qr/^([a-z]+)([!<]+)(?:,([a-z]+)([!<]+))?$/;
+      my $scoreinfo_re = qr/^([a-z]+)([!<]+)?(?:,([a-z]+)([!<]+)?)?$/;
 
       if (defined $pscoreinfo && $pscoreinfo =~ /$scoreinfo_re/) {
          $$s{server}{$key}{scoreinfo}{player}{label} = $1;
-         $$s{server}{$key}{scoreinfo}{player}{flags} = $2;
-         $$s{server}{$key}{scoreinfo}{player}{order} = $2 =~ /</ ? 1 : 0;
+         $$s{server}{$key}{scoreinfo}{player}{flags} = defined $2 ? $2 : '';
+         $$s{server}{$key}{scoreinfo}{player}{order} = defined $2 && $2 =~ /</ ? 1 : 0;
          # secondary player score is not active in xon yet (fullstatus)
       }
 
       if (defined $tscoreinfo && $tscoreinfo =~ /$scoreinfo_re/) {
          $$s{server}{$key}{scoreinfo}{team}{pri}{label} = $1;
-         $$s{server}{$key}{scoreinfo}{team}{pri}{flags} = $2;
-         $$s{server}{$key}{scoreinfo}{team}{pri}{order} = $2 =~ /</ ? 1 : 0;
+         $$s{server}{$key}{scoreinfo}{team}{pri}{flags} = defined $2 ? $2 : '';
+         $$s{server}{$key}{scoreinfo}{team}{pri}{order} = defined $2 && $2 =~ /</ ? 1 : 0;
 
          if (defined $3) {
             $$s{server}{$key}{scoreinfo}{team}{prefer} = 'sec';
             $$s{server}{$key}{scoreinfo}{team}{sec}{label} = $3;
-            $$s{server}{$key}{scoreinfo}{team}{sec}{flags} = $4;
-            $$s{server}{$key}{scoreinfo}{team}{sec}{order} = $4 =~ /</ ? 1 : 0;
+            $$s{server}{$key}{scoreinfo}{team}{sec}{flags} = defined $4 ? $4 : '';
+            $$s{server}{$key}{scoreinfo}{team}{sec}{order} = defined $4 && $4 =~ /</ ? 1 : 0;
          }
          else {
             $$s{server}{$key}{scoreinfo}{team}{prefer} = 'pri';
          }
-
-         my $teams = {
-             5 => 1, # red
-            14 => 2, # blue
-            13 => 3, # yellow
-            10 => 4, # pink
-         };
 
          while (my ($k, $v) = splice(@tscores, 0, 2)) {
             if ($$s{server}{$key}{scoreinfo}{team}{prefer} eq 'sec') {

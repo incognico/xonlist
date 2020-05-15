@@ -1,7 +1,7 @@
 appname: "xonlist"
 behind_proxy: 1
 charset: "UTF-8"
-desc: "Server List for the ArenaFPS game Xonotic. Current servers, players, teams, scores & more online."
+desc: "Public Server List for the ArenaFPS game Xonotic. Current servers, players, scores & more online - tracking all master servers."
 engines:
   template:
     template_autoFilter:

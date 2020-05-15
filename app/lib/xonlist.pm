@@ -276,6 +276,8 @@ sub parse_list ()
    }
 
    $$s{info}{lastupdate_epoch} = $fstat_json = (stat($qstat_json))[9];
+
+   return;
 }
 
 sub update_banned () {
@@ -286,6 +288,8 @@ sub update_banned () {
    }
 
    $fstat_checkupdate = (stat($checkupdate))[9];
+
+   return;
 }
 
 sub detect_changes () {
@@ -293,6 +297,8 @@ sub detect_changes () {
    parse_list()    unless ((stat($qstat_json))[9]  == $fstat_json);
 
    $$s{info}{lastupdate} = time - $fstat_json;
+
+   return;
 }
 
 ###
@@ -353,4 +359,4 @@ get '/endpoint/json' => sub ($) {
    };
 };
 
-true;
+1;

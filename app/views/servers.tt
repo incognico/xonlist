@@ -65,7 +65,7 @@
                      </tr>
                      [% IF i.fballowed == 0 %]
                      <tr>
-                        <td>Fullbright Models:</td>
+                        <td>Fullbright:</td>
                         <td>Forbidden</td>
                      </tr>
                      [% END %]

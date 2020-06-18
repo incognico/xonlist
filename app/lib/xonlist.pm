@@ -255,8 +255,8 @@ sub parse_list ()
       my $rec = $gi->record_for_address((split(/:/, $$_{address}))[0]);
       $$s{server}{$key}{geo} = $rec->{country}{iso_code} ? $rec->{country}{iso_code} : '??';
 
-      $$s{server}{$key}{realname} = decode_utf8(pack('H*', $$_{name}));
-      $$s{server}{$key}{map}      = decode_utf8(pack('H*', $$_{map}));
+      $$s{server}{$key}{realname} = formatnick($$_{name});
+      $$s{server}{$key}{map}      = formatnick($$_{map});
 
       for ($$s{server}{$key}{players}->@*) {
          $$_{name} = formatnick($$_{name});

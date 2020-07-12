@@ -102,7 +102,7 @@
                      [% p_sorted = i.scoreinfo.player.order ? i.players.nsort('prio', 'score', 'team') : i.players.nsort('score').reverse.nsort('prio', 'team') %]
                      [% FOREACH p IN p_sorted %]
                      <tr[% IF i.teamplay %] [% IF p.team == 1 %]class="team1red"[% ELSIF p.team == 2 %]class="team2blue"[% ELSIF p.team == 3 %]class="team3yellow"[% ELSIF p.team == 4 %]class="team4pink"[% END %][% END %]>
-                        <td[% IF p.name.length > 64 %]title="[% p.name %]"[% END %]>[% utrunc(p.name, 64) %]</td>
+                        <td[% IF p.name.length > 42 %] title="[% p.name %]"[% END %]>[% utrunc(p.name, 42) %]</td>
                         <td>[% IF p.ping == 1 %]&#9658;&#9658;&#9658;[% ELSIF p.ping %][% p.ping %][% ELSE %]bot[% END %]</td>
                         <td>[% IF p.score == -666 || (p.ping == 1 && team == 0) %]<span title="spectator">spec</span>[% ELSIF p.score == -616 %]<span title="out of game">oog</span>[% ELSIF i.scoreinfo.player.label.match('^(fastest|time)$') %][% s2t(p.score) %][% ELSIF i.mode == 'LMS' %][% IF p.score > 255 || p.score == 0 %]-[% ELSE %][% ordinate(p.score) %][% END %][% ELSIF i.mode == 'CA' %][% dmg2k(p.score / 1000) %][% ELSIF i.mode == 'COOP' && i.mode2 == 'QUAKE' %][% p.score * -1 %][% ELSE %][% p.score %][% END %]</td>
                      </tr>

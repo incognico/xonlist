@@ -1,0 +1,1 @@
+xontic_ca_workaround.patch is not needed anymore after https://github.com/multiplay/qstat/commit/02f3fb9c2e03eebfdac2b9e57a804efb96fbe58a

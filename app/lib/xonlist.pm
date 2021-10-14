@@ -10,7 +10,7 @@ use feature 'signatures';
 no warnings qw(experimental::signatures experimental::smartmatch);
 
 use Dancer2 ':nopragmas';
-use Encode::Simple qw(encode_utf8 decode_utf8);
+use Encode::Simple qw(encode_utf8 decode_utf8_lax);
 use File::Slurper qw(read_lines read_text);
 use MaxMind::DB::Reader;
 use Unicode::Truncate;
@@ -156,7 +156,7 @@ sub formatnick ($p) {
    my $up = pack('H*', $p);
    $up =~ s/\^(\d|x[\dA-Fa-f]{3})//g;
 
-   return qfont_decode(decode_utf8($up));
+   return qfont_decode(decode_utf8_lax($up));
 }
 
 sub score2time ($score) {
@@ -197,6 +197,8 @@ sub parse_list ()
       ($enc, $$s{server}{$key}{d0id}) = (defined $$_{rules}{d0_blind_id} ? split(/ /, $$_{rules}{d0_blind_id}, 2) : 0, 0);
       $$s{server}{$key}{enc} = int($enc);
 
+      $$_{rules}{qcstatus} = '?:::' unless (defined $$_{rules}{qcstatus});
+      $$_{rules}{qcstatus} = (defined $1 ? $1 : '?') . ':?:P9999:S0:F0:MUnkown::' . (defined $2 ? $2 : '') if ($$_{rules}{qcstatus} =~ /^([a-z\?]+):::(.+)?$/);
       # gametype:version:P<pure>:S<slots>:F<flags>:M<mode>::plabel,plabel:tlabel,tlabel:teamid:tscore,tscore:teamid:tscore,tscore
       my ($mode, $ver, $impure, $slots, $flags, $mode2, undef, $pscoreinfo, $tscoreinfo, @tscores) = split(/:/, $$_{rules}{qcstatus});
       $$s{server}{$key}{version}   = $ver;

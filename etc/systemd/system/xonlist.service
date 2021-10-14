@@ -5,7 +5,7 @@ After=network.target remote-fs.target nss-lookup.target
 [Service]
 Type=simple
 PIDFile=/run/xonlist/xonlist.pid
-ExecStart=/usr/bin/site_perl/start_server --signal-on-hup=SIGHUP --pid-file=/run/xonlist/xonlist.pid --path=/run/xonlist/xonlist.socket -- /usr/bin/site_perl/plackup -s Gazelle -workers=10 -E production -r -R /srv/www/xonotic.lifeisabug.com/app/lib -a /srv/www/xonotic.lifeisabug.com/app/bin/app.psgi
+ExecStart=/usr/bin/site_perl/start_server --signal-on-hup=SIGHUP --pid-file=/run/xonlist/xonlist.pid --path=/run/xonlist/xonlist.socket -- /usr/bin/site_perl/plackup -s Gazelle -workers=10 -E production -r -R /srv/www/xonotic.lifeisabug.com/app/lib/xonlist.pm,/srv/www/xonotic.lifeisabug.com/app/views -a /srv/www/xonotic.lifeisabug.com/app/bin/app.psgi
 ExecReload=/usr/bin/kill -HUP $MAINPID
 PrivateDevices=yes
 PrivateTmp=true

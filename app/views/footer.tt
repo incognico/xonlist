@@ -1,6 +1,6 @@
 <!-- JS -->
 <script src="https://[% settings.domain %]/js/dark-mode-toggle.min.js" type="module"></script>
-<script src="https://[% settings.domain %]/js/jquery-3.5.0.slim.min.js"></script>
+<script src="https://[% settings.domain %]/js/jquery-3.6.0.slim.min.js"></script>
 <script src="https://[% settings.domain %]/js/clipboard.min.js"></script>
 <script>
   var clipboard = new ClipboardJS('.clipboard');

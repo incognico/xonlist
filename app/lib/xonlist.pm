@@ -141,15 +141,19 @@ sub qfont_decode ($qstr = '') {
    my @chars;
 
    for (split('', $qstr)) {
+      next if ($_ eq "\{U+FFFD}");
+
       my $i = ord($_) - 0xE000;
       my $c = ($_ ge "\N{U+E000}" && $_ le "\N{U+E0FF}")
       ? $qfont_unicode_glyphs[$i % @qfont_unicode_glyphs]
       : $_;
       #printf "<$_:$c|ord:%d>", ord;
-      push @chars, $c if defined $c;
+
+      push(@chars, $c) if (defined $c);
    }
 
-   return join '', @chars;
+   return join('', @chars) if @chars;
+   return 'unkown';
 }
 
 sub formatnick ($p) {

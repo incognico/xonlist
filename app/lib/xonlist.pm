@@ -153,7 +153,7 @@ sub qfont_decode ($qstr = '') {
    }
 
    return join('', @chars) if @chars;
-   return 'unkown';
+   return 'unknown';
 }
 
 sub formatnick ($p) {

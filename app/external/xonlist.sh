@@ -9,6 +9,7 @@ pushd $tmp
 
 qstat -cfg $cfg -nh -xonoticm,outfile dpmaster.deathmask.net,$tmp/tmp-deathmask-out
 qstat -cfg $cfg -nh -xonoticm,outfile dpmaster.tchr.no,$tmp/tmp-tchr-out
+qstat -cfg $cfg -nh -xonoticm,outfile dpm.dpmaster.org:27777,$tmp/tmp-gazby-out
 #qstat -cfg $cfg -xonoticm,outfile dpmaster.ghdigital.com,$tmp/tmp-ghdigital-out
 
 cat $tmp/tmp-*-out | sort | uniq > $tmp/tmp-all-out

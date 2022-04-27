@@ -13,14 +13,20 @@
    <meta name="msapplication-tooltip" content="Xonotic Server List">
    <meta name="msapplication-starturl" content="https://[% settings.domain %]/">
    <link rel="manifest" href="https://[% settings.domain %]/manifest.json">
+   [% IF !rjz %]
    <link rel="modulepreload" href="https://[% settings.domain %]/js/dark-mode-toggle.min.js">
+   [% END %]
 
    <!-- CSS -->
    <link rel="stylesheet" href="https://[% settings.domain %]/css/normalize.css">
    <link rel="stylesheet" href="https://[% settings.domain %]/css/barebones.min.css">
    <link rel="stylesheet" href="https://[% settings.domain %]/css/common.css">
+   [% IF !rjz %]
    <link rel="stylesheet" href="https://[% settings.domain %]/css/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
    <link rel="stylesheet" href="https://[% settings.domain %]/css/dark.css" media="(prefers-color-scheme: dark)">
+   [% ELSE %]
+   <link rel="stylesheet" href="https://rocketjump.zone/xonlist.css">
+   [% END %]
    <link rel="stylesheet" href="https://[% settings.domain %]/css/flags.css">
 
    <!-- Icons -->

@@ -320,7 +320,8 @@ hook before => sub ($) {
 };
 
 hook before_template_render => sub ($tokens) {
-   $tokens->{dbg} = to_dumper($tokens) if config->{'environment'} eq 'development';
+   $$tokens{dbg} = to_dumper($tokens) if (config->{'environment'} eq 'development');
+   $$tokens{rjz}++ if query_parameters->get('rjz'); # https://rocketjump.zone/browser/
 };
 
 get '/' => sub ($) {

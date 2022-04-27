@@ -2,10 +2,12 @@
 [% dmg2k = format('%.2f k') %]
 [% IF !selection %]
 <div class="row u-align-left">
+   [% IF !rjz %]
    <h4>[% settings.title %]</h4>
    <aside class="u-pull-right"><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
-   <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing <a rel="noopener" title="Xonotic - The Free and Fast Arena Shooter" href="https://xonotic.org/">Xonotic</a> on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
-   <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="https://[% settings.domain %]/">Click to refresh.</a></p>
+   [% END %]
+   <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing [% IF !rjz %]<a rel="noopener" title="Xonotic - The Free and Fast Arena Shooter" href="https://xonotic.org/">[% END %]Xonotic[% IF !rjz %]</a>[% END %] on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
+   <p>Last updated: [% s.info.lastupdate %] seconds ago. <a href="https://[% settings.domain %]/[% IF rjz %]?rjz=1" id="rjza"><span id="rjzref" class="w3-tag mobile-margin-20-full w3-hover-white w3-red"><i class="fas fa-undo"></i>REFRESH</span>[% ELSE %]">Click to refresh.[% END %]</a></p>
 </div>
 <div class="row"><input id="filter" class="u-full-width" type="search" placeholder="Filter by Server Name, Game Type or Map Name&hellip;"></div>
 <table id="main" class="u-full-width">
@@ -49,7 +51,7 @@
                   <tbody class="details2">
                      <tr>
                         <td>Address:</td>
-                        <td><a class="hlink" href="https://[% settings.domain %]/server/[% i.address %]" title="Permanent link to this servers information">[% i.address %]</a></td>
+                        <td>[% IF !rjz %]<a class="hlink" href="https://[% settings.domain %]/server/[% i.address %]" title="Permanent link to this servers information">[% END %][% i.address %][% IF !rjz %]</a>[% END %]</td>
                      </tr>
                      <tr title="[% i.gamedir %]">
                         <td>Game Version:</td>
@@ -60,7 +62,7 @@
                         <td>[% IF i.enc == 3 %]Required[% ELSIF i.enc == 2 %]Requested[% ELSIF i.enc == 1 %]Supported[% ELSIF i.enc == 0 %]Not Supported[% END %]</td>
                      </tr>
                      <tr>
-                        <td><a class="hlink" href="http://stats.xonotic.org/" rel="noopener">Player Statistics:</a></td>
+                        <td>[% IF !rjz %]<a class="hlink" href="http://stats.xonotic.org/" rel="noopener">[% END %]Player Statistics:[% IF !rjz %]</a>[% END %]</td>
                         <td>[% IF i.stats == 0 %]Not Supported[% ELSE %]Supported[% END %]</td>
                      </tr>
                      [% IF i.fballowed == 0 %]

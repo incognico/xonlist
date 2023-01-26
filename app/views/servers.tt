@@ -1,4 +1,3 @@
-[% USE format %]
 [% IF !selection %]
 <div class="row u-align-left">
    [% IF !rjz %]

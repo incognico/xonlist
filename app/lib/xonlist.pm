@@ -41,6 +41,7 @@ my $modes = {
    'KA'        => 'Keepaway',
    'KH'        => 'Key Hunt',
    'LMS'       => 'Last Man Standing',
+   'MAYHEM'    => 'Mayhem',
    'NB'        => 'Nexball',
    'ONS'       => 'Onslaught',
    'RACE'      => 'Race',
@@ -49,6 +50,7 @@ my $modes = {
    'RUNEMATCH' => 'Runematch',
    'SNAFU'     => '???',
    'TDM'       => 'Team Deathmatch',
+   'TMAYHEM'   => 'Team Mayhem',
    'VIP'       => 'Very Important Player',
 };
 

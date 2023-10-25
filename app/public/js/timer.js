@@ -1,22 +1,26 @@
-var zeit = document.getElementById("timer").innerText;
-var span = 0;
+var ele = document.getElementById("timer");
 
-function zeita() {
-  zeit++;
+if (ele) {
+  var zeit = ele.innerText;
+  var span = 0;
 
-  if (zeit % 2) {
-    document.getElementById("timer").innerText = zeit;
+  function zeita() {
+    zeit++;
+
+    if (zeit % 2) {
+      ele.innerText = zeit;
+    }
+
+    if (span == 0 && zeit > 310) {
+      activateSpan();
+      span++;
+    }
   }
 
-  if (span == 0 && zeit > 310) {
-    activateSpan();
-    span++;
+  function activateSpan() {
+    var x = document.getElementById("refresh");
+      x.style.display = "inline";
   }
-}
 
-function activateSpan() {
-  var x = document.getElementById("refresh");
-    x.style.display = "inline";
+  setInterval(zeita, 1000); 
 }
-
-setInterval(zeita, 1000); 

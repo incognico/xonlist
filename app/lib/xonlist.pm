@@ -23,6 +23,7 @@ my $checkupdate = config->{'filedir'} . '/checkupdate.txt';
 my $modes = {
    'ARENA'     => 'Duel Arena',
    'AS'        => 'Assault',
+   'BR'        => 'Battle Royale',
    'CA'        => 'Clan Arena',
    'CONQUEST'  => 'Conquest',
    'COOP'      => 'Cooperative',

@@ -50,6 +50,7 @@ my $modes = {
    'RUNEMATCH' => 'Runematch',
    'SNAFU'     => '???',
    'TDM'       => 'Team Deathmatch',
+   'TKA'       => 'Team Keepaway',
    'TMAYHEM'   => 'Team Mayhem',
    'VIP'       => 'Very Important Player',
 };

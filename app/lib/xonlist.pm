@@ -49,6 +49,7 @@ my $modes = {
    'RUNE'      => 'Runematch',
    'RUNEMATCH' => 'Runematch',
    'SNAFU'     => '???',
+   'SURV'      => 'Survival',
    'TDM'       => 'Team Deathmatch',
    'TKA'       => 'Team Keepaway',
    'TMAYHEM'   => 'Team Mayhem',

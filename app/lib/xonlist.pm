@@ -209,7 +209,7 @@ sub parse_list ()
       # gametype:version:P<pure>:S<slots>:F<flags>:M<mode>::plabel,plabel:tlabel,tlabel:teamid:tscore,tscore:teamid:tscore,tscore
       # gametype:version:P<pure>:S<slots>:F<flags>:M<mode>:T<?>::plabel,plabel:tlabel,tlabel:teamid:tscore,tscore:teamid:tscore,tscore
       $$_{rules}{qcstatus} = '?:::' unless (defined $$_{rules}{qcstatus});
-      $$_{rules}{qcstatus} = (defined $1 ? $1 : '?') . ':?:P9999:S0:F0:MUnkown::' . (defined $2 ? $2 : '') if ($$_{rules}{qcstatus} =~ /^([a-z\?]+):::(.+)?$/);
+      $$_{rules}{qcstatus} = (defined $1 ? $1 : '?') . ':?:P9999:S0:F0:MUnknown::' . (defined $2 ? $2 : '') if ($$_{rules}{qcstatus} =~ /^([a-z\?]+):::(.+)?$/);
       $$_{rules}{qcstatus} =~ s/:F[0-9]+:\KT[^:]+://;
       my ($mode, $ver, $impure, $slots, $flags, $mode2, undef, $pscoreinfo, $tscoreinfo, @tscores) = split(/:/, $$_{rules}{qcstatus});
       $$s{server}{$key}{version}   = $ver;

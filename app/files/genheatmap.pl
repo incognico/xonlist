@@ -12,7 +12,7 @@ use List::Util qw(max);
 #use Data::Dumper;
 
 my $db = '/srv/www/xonotic.lifeisabug.com/app/files/activity.db';
-my $font_path = '/srv/www/xonotic.lifeisabug.com/app/files/Xolonium-Regular.ttf';
+my $font_path = '/srv/www/xonotic.lifeisabug.com/app/public/fonts/xolonium-regular.ttf';
 my $font_size = 10;
 
 my ($s, $dbi, $dbh);
@@ -101,6 +101,7 @@ for my $i (0..$#servers) {
       $x,
       $y,
       sprintf('#%d: %s', $i+1,$data->{$servers[$i]}{name}),
+      { charmap => 'Unicode' }
    );
 }
 

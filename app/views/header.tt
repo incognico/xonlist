@@ -26,6 +26,7 @@
    <link rel="stylesheet" href="https://[% settings.domain %]/css/dark.css" media="(prefers-color-scheme: dark)">
    [% ELSE %]
    <link rel="stylesheet" href="https://rocketjump.zone/xonlist.css">
+   <link rel="stylesheet" href="https://rocketjump.zone/font-awesome.css">
    [% END %]
    <link rel="stylesheet" href="https://[% settings.domain %]/css/flags.css">
 

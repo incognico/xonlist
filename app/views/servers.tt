@@ -4,7 +4,7 @@
    <h4>[% settings.title %]</h4>
    <aside class="u-pull-right"><dark-mode-toggle remember="save"></dark-mode-toggle></aside>
    [% END %]
-   <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing [% IF !rjz %]<a rel="noopener" title="Xonotic - The Free and Fast Arena Shooter" href="https://xonotic.org/">[% END %]Xonotic[% IF !rjz %]</a>[% END %] on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.</p>
+   <p><b>[% s.info.totalplayers %]</b> players [% IF s.info.totalbots > 0 %](+[% s.info.totalbots %] bots) [% END %]are currently playing [% IF !rjz %]<a rel="noopener" title="Xonotic - The Free and Fast Arena Shooter" href="https://xonotic.org/">[% END %]Xonotic[% IF !rjz %]</a>[% END %] on <b>[% s.info.activeservers %]</b> out of [% s.info.totalservers %] publicly listed servers.<br><a href="https://[% settings.domain %]/heatmap.png" _target="blank">Server Activity Heatmap</a> <span title="Coordinated Universal Time">(Hours in UTC, F5 to refresh).</span></p>
    <p>Last updated: <span id="timer">[% s.info.lastupdate %]</span> seconds ago.<span id="refresh" style="display:none;"> <a href="https://[% settings.domain %]/[% IF rjz %]?rjz=1" id="rjza"><span id="rjzref" class="w3-tag mobile-margin-20-full w3-hover-white w3-red"><i class="fa-solid fa-arrows-rotate"></i>REFRESH</span>[% ELSE %]">Click to refresh.[% END %]</a></span></p>
 </div>
 <div class="row"><input id="filter" class="u-full-width" type="search" placeholder="Filter by Server Name, Game Type or Map Name&hellip;"></div>

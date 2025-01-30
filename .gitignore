@@ -1,4 +1,6 @@
 *.log
 *.tcc
-app/files/
+app/files/*.db
+app/files/*.txt
+app/files/*.json
 app/public/crbug/

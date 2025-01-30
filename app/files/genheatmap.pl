@@ -34,9 +34,9 @@ sub sqlite_disconnect {
    $dbh->disconnect;
 }
 
-sqlite_connect();
-
 ###
+
+sqlite_connect();
 
 my $data = $dbh->selectall_hashref('SELECT * from activity', 'server');
 
@@ -52,13 +52,13 @@ foreach my $server (values %$data) {
 my $max_val = 0;
 my $total = 0;
 foreach my $server (values %$data) {
-    for my $hour (0..23) {
-        my $val = $server->{$hour} || 0;
-        $max_val = $val if $val > $max_val;
-        $total += $val;
-    }
-    $server->{total} = $total;
-    $total = 0;
+   for my $hour (0..23) {
+      my $val = $server->{$hour} || 0;
+      $max_val = $val if $val > $max_val;
+      $total += $val;
+   }
+   $server->{total} = $total;
+   $total = 0;
 }
 
 # Draw
@@ -94,14 +94,14 @@ for my $i (0..$#servers) {
    my $x = $left_margin + (24 * $cell_width) + 10;
    my $y = $top_margin + $i * $cell_height + $font_size + 8;
    $image->stringFT(
-        $black,
-        $font_path,
-        $font_size,
-        0,
-        $x,
-        $y,
-        sprintf('#%d: %s', $i+1,$data->{$servers[$i]}{name}),
-    );
+      $black,
+      $font_path,
+      $font_size,
+      0,
+      $x,
+      $y,
+      sprintf('#%d: %s', $i+1,$data->{$servers[$i]}{name}),
+   );
 }
 
 # X (hours)
@@ -121,25 +121,25 @@ for my $hour (0..23) {
 
 # Heatmap cells
 for my $i (0..$#servers) {
-    my $server = $servers[$i];
+   my $server = $servers[$i];
 
-    for my $hour (0..23) {
-       my $value = defined $data->{$server}{$hour} ? $data->{$server}{$hour} : 0;
+   for my $hour (0..23) {
+      my $value = defined $data->{$server}{$hour} ? $data->{$server}{$hour} : 0;
 
-       my $ratio = $max_val > 0 ? ($value / $max_val) : 0;
-      
-       my $r = int(255 - (255 - $r_max) * $ratio);
-       my $g = int(255 - (255 - $g_max) * $ratio);
-       my $b = int(255 - (255 - $b_max) * $ratio);
-       
-       my $color = $image->colorAllocate($r, $g, $b);
+      my $ratio = $max_val > 0 ? ($value / $max_val) : 0;
 
-       my $x = $left_margin + $hour * $cell_width;
-       my $y = $top_margin + $i * $cell_height;
-        
-       $image->filledRectangle($x, $y, $x + $cell_width, $y + $cell_height, $color);
-       $image->rectangle($x, $y, $x + $cell_width, $y + $cell_height, $gray);
-    }
+      my $r = int(255 - (255 - $r_max) * $ratio);
+      my $g = int(255 - (255 - $g_max) * $ratio);
+      my $b = int(255 - (255 - $b_max) * $ratio);
+
+      my $color = $image->colorAllocate($r, $g, $b);
+
+      my $x = $left_margin + $hour * $cell_width;
+      my $y = $top_margin + $i * $cell_height;
+
+      $image->filledRectangle($x, $y, $x + $cell_width, $y + $cell_height, $color);
+      $image->rectangle($x, $y, $x + $cell_width, $y + $cell_height, $gray);
+   }
 }
 
 open my $out, '>', '/srv/www/xonotic.lifeisabug.com/app/public/heatmap.png' or die $!;

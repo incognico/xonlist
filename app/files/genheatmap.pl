@@ -93,6 +93,7 @@ $image->filledRectangle(0, 0, $width, $height, $white);
 for my $i (0..$#servers) {
    my $x = $left_margin + (24 * $cell_width) + 10;
    my $y = $top_margin + $i * $cell_height + $font_size + 8;
+
    $image->stringFT(
       $black,
       $font_path,
@@ -100,15 +101,18 @@ for my $i (0..$#servers) {
       0,
       $x,
       $y,
-      sprintf('#%d: %s', $i+1,$data->{$servers[$i]}{name}),
+      sprintf('#%d: %s', $i+1, $data->{$servers[$i]}{name}),
       { charmap => 'Unicode' }
    );
+
+   say ($data->{$servers[$i]}{total} . '---' . $data->{$servers[$i]}{name});
 }
 
 # X (hours)
 for my $hour (0..23) {
    my $x = $left_margin + $hour * $cell_width + 5;
    my $y = $height - $bottom_margin + $font_size + 6;
+
    $image->stringFT(
       $black,
       $font_path,
@@ -116,7 +120,7 @@ for my $hour (0..23) {
       0,
       $x,
       $y,
-      sprintf('%.2d:00', $hour),
+      $hour == 23 ? sprintf('%.2d:00                              All times are UTC / press F5 to refresh', $hour) : sprintf('%.2d:00', $hour),
    );
 }
 

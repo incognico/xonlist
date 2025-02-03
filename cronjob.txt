@@ -1,2 +1,4 @@
   0    0   *   *  *  wget -q https://gitlab.com/xonotic/xonotic/raw/master/misc/infrastructure/checkupdate.txt -O /srv/www/xonotic.lifeisabug.com/app/files/checkupdate.txt >/dev/null
   */5  *   *   *  *  /srv/www/xonotic.lifeisabug.com/app/external/xonlist.sh >/dev/null 2>&1
+  0,30 *   *   *  *  /srv/www/xonotic.lifeisabug.com/app/files/activity.pl >/dev/null
+  1,31 *   *   *  *  /srv/www/xonotic.lifeisabug.com/app/files/genheatmap.pl >/dev/null

@@ -7,13 +7,13 @@ use strict;
 use warnings;
 
 use feature 'signatures';
-no warnings qw(experimental::signatures experimental::smartmatch);
 
-use Dancer2 ':nopragmas';
+use Dancer2 qw(!any :nopragmas);
 use Encode::Simple qw(encode_utf8 decode_utf8_lax);
 use File::Slurper qw(read_lines read_text);
 use MaxMind::DB::Reader;
 use Unicode::Truncate;
+use List::Util 'any';
 
 our $VERSION = '0.1';
 
@@ -192,7 +192,7 @@ sub parse_list ()
    for ($qstat->@*) {
       next unless ($$_{hostname} && $$_{status} eq 'online');
       next if ($$_{rules}{gameversion} > 65535);
-      next if ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
+      next if (any { $_ eq (split /:([^:]+)$/, $$_{address})[0] } @banned);
 
       my $key = $$_{address};
       $$s{server}{$key} = $_;
@@ -354,7 +354,7 @@ get '/servers' => sub ($) {
    $$ttvars{$_} = $$ttsubs{$_} for (keys $ttsubs->%*);
 
    for (keys $$s{server}->%*) {
-      next if (!($_ ~~ @servers));
+      next unless (any { $_ } @servers);
       $$ttvars{s}{server}{$_} = $$s{server}{$_} if (defined $$s{server}{$_});
    }
 
@@ -364,13 +364,7 @@ get '/servers' => sub ($) {
 get '/endpoint/json' => sub ($) {
    my $pretty = query_parameters->get('pretty');
 
-   #send_as JSON => $s; # nuu pretty print :(
-
-   content_type 'application/json';
-
-   delayed {
-      content $pretty ? (to_json($s, { utf8 => 1, pretty => 1 })) : encode_json($s);
-   };
+   send_as JSON => $s; # nuu pretty print :(
 };
 
 1;

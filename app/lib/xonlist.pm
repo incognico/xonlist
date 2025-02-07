@@ -199,8 +199,6 @@ sub parse_list ()
 
       delete $$s{server}{$key}{$_} for qw(gametype hostname protocol retries status);
 
-      next if (exists $$s{server}{rules});
-
       $$s{server}{$key}{numbots}     = int($$_{rules}{bots});
       $$s{server}{$key}{numplayers} -= $$_{rules}{bots};
 

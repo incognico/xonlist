@@ -184,7 +184,7 @@ sub parse_list ()
 {
    $s = {};
 
-   my $qstat = decode_json(read_text($qstat_json));
+   my $qstat = JSON::MaybeXS->new({ allow_dupkeys => 1 })->decode(read_text($qstat_json));
    my $gi    = MaxMind::DB::Reader->new(file => config->{'geodb'});
 
    my ($totalplayers, $totalservers, $activeservers, $totalbots) = (0, 0, 0, 0);

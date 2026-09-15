@@ -150,8 +150,8 @@ td:last-child {
 .col-name { width: 42%; }
 .col-type { width: 12%; }
 .col-map { width: 18%; }
-.col-players { width: 10%; }
-.col-btn { width: 7%; }
+.col-players { width: 7%; }
+.col-btn { width: 10%; }
 
 #main tbody tr.info {
   height: auto;        /* ensure rows size to content */

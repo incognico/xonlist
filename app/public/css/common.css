@@ -146,6 +146,59 @@ td:last-child {
   min-height: unset;   /* if min-height is set elsewhere */
 }
 
+.col-flag { width: 4%; }
+.col-name { width: 42%; }
+.col-type { width: 12%; }
+.col-map { width: 18%; }
+.col-players { width: 7%; }
+.col-btn { width: 10%; }
+
 #main tbody tr.info {
   height: auto;        /* ensure rows size to content */
+}
+
+.tempty {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Keep Details/connect buttons inside fixed table columns */
+#main th.col-btn,
+#main td:nth-child(6),
+#main td:nth-child(7) {
+  overflow: hidden;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+#main .button,
+#main .button-primary,
+#main .button-small,
+#main button {
+  box-sizing: border-box;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  min-height: 28px;
+  padding: 0 6px;
+  margin-bottom: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Expanded detail rows: contain nested tables */
+#main tr.details > td {
+  overflow-x: auto;
+  max-width: 0; /* with table-layout:fixed + colspan, constrains width */
+}
+
+#main tr.details .grid-container.halves {
+  max-width: 100%;
+}
+
+#main tr.details table {
+  width: 100%;
+  table-layout: fixed;
+  margin-bottom: 0;
 }

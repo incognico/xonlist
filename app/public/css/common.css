@@ -150,8 +150,8 @@ td:last-child {
 #main .col-type { width: 11%; }
 #main .col-map { width: 16%; }
 #main .col-players { width: 8%; }
-#main .col-link { width: 32px; }
-#main .col-details { width: 6.2rem; }
+#main .col-link { width: 3%; }
+#main .col-details { width: 11%; }
 
 #main tbody tr.info {
   height: auto;
@@ -167,12 +167,20 @@ td:last-child {
 }
 
 #main .col-link,
-#main .col-details,
-#main td:nth-child(6),
-#main td:nth-child(7) {
+#main td:nth-child(6) {
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
+}
+
+#main .col-details,
+#main td:nth-child(7),
+#main th:last-child,
+#main td:last-child {
+  text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
+  padding-right: 0;
 }
 
 #main .button,

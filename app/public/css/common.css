@@ -162,6 +162,10 @@ td:last-child {
   margin: 0 auto;
 }
 
+.tempty.is-on {
+  font-weight: bold;
+}
+
 /* Keep Details/connect buttons inside fixed table columns */
 #main th.col-btn,
 #main td:nth-child(6),

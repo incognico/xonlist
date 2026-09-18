@@ -1,6 +1,7 @@
 body {
   background-color: #222;
   color: #fff;
+  --stripe-bg: rgba(25, 25, 25, 0.5);
 }
 
 ::-webkit-scrollbar-track-piece { background-color: #000; }
@@ -11,7 +12,15 @@ td, th {
 
 tr.stripe:nth-child(4n),
 tr.stripe:nth-child(4n-1) {
-  background-color: rgb(25, 25, 25, 0.5);
+  background-color: var(--stripe-bg);
+}
+
+#main.js-stripes tr.stripe {
+  background-color: transparent;
+}
+
+#main.js-stripes tr.stripe.alt {
+  background-color: var(--stripe-bg);
 }
 
 .button, input[type="button"] {

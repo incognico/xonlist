@@ -30,7 +30,7 @@ $(document).ready(function() {
       const $info = $(this);
       const $details = $info.next("tr.details");
       const empty = $info.hasClass("empty");
-      const show = matches($info, q) && (!empty || showEmpty || q.length > 0);
+      const show = matches($info, q) && (!empty || showEmpty);
 
       $info.toggleClass("hidden", !show);
       if (!show) {

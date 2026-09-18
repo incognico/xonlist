@@ -145,22 +145,16 @@ td:last-child {
   width: 100%;
 }
 
-#main .col-flag { width: 36px; }
-#main .col-name { width: auto; }
-#main .col-type { width: 7.2rem; }
-#main .col-map { width: 9rem; }
-#main .col-players { width: 5.6rem; }
-#main .col-link { width: 44px; }
-#main .col-details { width: 6.6rem; }
+#main .col-flag { width: 3%; }
+#main .col-name { width: 48%; }
+#main .col-type { width: 11%; }
+#main .col-map { width: 16%; }
+#main .col-players { width: 8%; }
+#main .col-link { width: 32px; }
+#main .col-details { width: 6.2rem; }
 
 #main tbody tr.info {
   height: auto;
-}
-
-#main tr.info td:nth-child(2) {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .tempty {
@@ -179,27 +173,28 @@ td:last-child {
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
-  overflow: visible;
 }
 
 #main .button,
 #main .button-primary,
-#main .button-small,
 #main button {
   box-sizing: border-box;
   width: auto;
-  max-width: none;
   height: auto;
   min-height: 28px;
-  padding: 0 8px;
+  padding: 0 10px;
   margin: 0;
   line-height: 1.2;
   white-space: nowrap;
 }
 
-#main .button-small {
-  padding: 0 4px;
-  min-width: 28px;
+#main .button-small,
+#main td:nth-child(6) .button {
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  line-height: 1;
+  font-size: 1.1rem;
 }
 
 #main tr.details > td {

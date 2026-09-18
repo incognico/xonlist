@@ -12,7 +12,7 @@
    <thead>
       <tr class="info">
          <th class="col-flag">&#x1F30D;</th>
-         <th class="col-name">Server</th>
+         <th class="col-name">Server Name</th>
          <th class="col-type">Type</th>
          <th class="col-map">Map</th>
          <th class="col-players">Players</th>

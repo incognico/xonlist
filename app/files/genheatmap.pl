@@ -8,11 +8,11 @@ use warnings;
 
 use DBI;
 use GD;
-use List::Util qw(max);
+use List::Util 'max';
 #use Data::Dumper;
 
-my $db = '/srv/www/xonotic.lifeisabug.com/app/files/activity.db';
-my $font_path = '/srv/www/xonotic.lifeisabug.com/app/public/fonts/xolonium-regular.ttf';
+my $db = '/home/www/xonotic.lifeisabug.com/app/files/activity.db';
+my $font_path = '/home/www/xonotic.lifeisabug.com/app/public/fonts/xolonium-regular.ttf';
 my $font_size = 10;
 
 my ($s, $dbi, $dbh);
@@ -147,7 +147,7 @@ for my $i (0..$#servers) {
    }
 }
 
-open my $out, '>', '/srv/www/xonotic.lifeisabug.com/app/public/heatmap.png' or die $!;
+open my $out, '>', '/home/www/xonotic.lifeisabug.com/app/public/heatmap.png' or die $!;
 binmode $out;
 print $out $image->png;
 close $out;

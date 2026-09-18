@@ -10,10 +10,11 @@ use Encode::Simple qw(decode_utf8_lax);
 use File::Slurper qw(read_lines read_text);
 use JSON::MaybeXS;
 use DBI;
+use List::Util 'any';
 
-my $qstat_json  = '/srv/www/xonotic.lifeisabug.com/app/files/current.json';
-my $checkupdate = '/srv/www/xonotic.lifeisabug.com/app/files/checkupdate.txt';
-my $db          = '/srv/www/xonotic.lifeisabug.com/app/files/activity.db';
+my $qstat_json  = '/home/www/xonotic.lifeisabug.com/app/files/current.json';
+my $checkupdate = '/home/www/xonotic.lifeisabug.com/app/files/checkupdate.txt';
+my $db          = '/home/www/xonotic.lifeisabug.com/app/files/activity.db';
 
 my ($s, @banned, @activity, @name, $dbh);
 
@@ -149,7 +150,7 @@ sub parse_list {
    for ($qstat->@*) {
       next unless ($$_{hostname} && $$_{status} eq 'online');
       next if ($$_{rules}{gameversion} > 65535);
-      next if ((split /:([^:]+)$/, $$_{address})[0] ~~ @banned);
+      next if (any { $_ eq (split /:([^:]+)$/, $$_{address})[0] } @banned);
 
       if ($_->{numplayers} > 0) {
          push(@activity, $_->{address});

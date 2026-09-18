@@ -142,19 +142,25 @@ td:last-child {
 
 #main {
   table-layout: fixed;
-  height: auto;        /* or remove any height declaration */
-  min-height: unset;   /* if min-height is set elsewhere */
+  width: 100%;
 }
 
-.col-flag { width: 4%; }
-.col-name { width: 42%; }
-.col-type { width: 12%; }
-.col-map { width: 18%; }
-.col-players { width: 7%; }
-.col-btn { width: 10%; }
+#main .col-flag { width: 36px; }
+#main .col-name { width: auto; }
+#main .col-type { width: 7.2rem; }
+#main .col-map { width: 9rem; }
+#main .col-players { width: 5.6rem; }
+#main .col-link { width: 44px; }
+#main .col-details { width: 6.6rem; }
 
 #main tbody tr.info {
-  height: auto;        /* ensure rows size to content */
+  height: auto;
+}
+
+#main tr.info td:nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tempty {
@@ -166,14 +172,14 @@ td:last-child {
   font-weight: bold;
 }
 
-/* Keep Details/connect buttons inside fixed table columns */
-#main th.col-btn,
+#main .col-link,
+#main .col-details,
 #main td:nth-child(6),
 #main td:nth-child(7) {
-  overflow: hidden;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
+  overflow: visible;
 }
 
 #main .button,
@@ -181,20 +187,23 @@ td:last-child {
 #main .button-small,
 #main button {
   box-sizing: border-box;
-  max-width: 100%;
   width: auto;
+  max-width: none;
   height: auto;
   min-height: 28px;
-  padding: 0 6px;
-  margin-bottom: 0;
+  padding: 0 8px;
+  margin: 0;
   line-height: 1.2;
   white-space: nowrap;
 }
 
-/* Expanded detail rows: contain nested tables */
+#main .button-small {
+  padding: 0 4px;
+  min-width: 28px;
+}
+
 #main tr.details > td {
   overflow-x: auto;
-  max-width: 0; /* with table-layout:fixed + colspan, constrains width */
 }
 
 #main tr.details .grid-container.halves {
@@ -203,6 +212,6 @@ td:last-child {
 
 #main tr.details table {
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   margin-bottom: 0;
 }

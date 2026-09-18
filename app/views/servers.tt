@@ -11,14 +11,14 @@
 <table id="main" class="u-full-width">
    <thead>
       <tr class="info">
-         <th>&#x1F30D;</th>
-         <th>Server Name</th>
-         <th>Type</th>
-         <th>Map</th>
-         <th>Players</th>
-         <th></th>
+         <th class="col-flag">&#x1F30D;</th>
+         <th class="col-name">Server</th>
+         <th class="col-type">Type</th>
+         <th class="col-map">Map</th>
+         <th class="col-players">Players</th>
+         <th class="col-link"></th>
          [% IF !embed %]
-         <th></th>
+         <th class="col-details"></th>
          [% END %]
       </tr>
    </thead>
@@ -27,7 +27,7 @@
       [% FOREACH i IN s.server.values.sort('realname').reverse.nsort('numplayers').reverse %]
       <tr data-id="[% i.address %]" class="stripe[% IF i.numplayers < 1 %] [% IF !embed %]hidden [% END %]empty[% END %] info">
          <td><span class="flag flag-[% i.geo.lower %]" title="[% i.geo %]"></span></td>
-         <td>[% i.realname %]</td>
+         <td title="[% i.realname %]">[% i.realname %]</td>
          <td title="[% i.modefull %]">[% i.mode %]<br><span class="size0">[% IF i.impure == 0 %]OFFICIAL[% ELSIF i.mode2 != 'VANILLA' %][% i.mode2 %][% IF i.mode2 == 'INSTAGIB' %]&nbsp;&odot;[% END %][% ELSE %]MODIFIED[% END %]</span></td>
          <td[% IF i.map.length > 16 %] title="[% i.map %]"[% END %]>[% utrunc(i.map, 16) %]</td>
          <td>[% IF i.numplayers > 0 %]<b>[% i.numplayers %]</b>[% ELSE %][% i.numplayers %][% END %]<span class="size1">/[% i.maxplayers %]</span></td>

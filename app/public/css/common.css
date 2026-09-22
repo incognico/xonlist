@@ -50,11 +50,6 @@ table {
   display: none;
 }
 
-.button-small {
-  padding: 0 3px;
-  min-width: 24px;
-}
-
 @media (max-width: 720px) {
   .button-primary { padding: 0 6px; }
 }
@@ -183,6 +178,11 @@ td:last-child {
   padding-right: 0;
 }
 
+#main tr.details th:nth-child(3),
+#main tbody.players td:nth-child(3) {
+  padding-right: 15px;
+}
+
 #main .button,
 #main .button-primary,
 #main button {
@@ -199,8 +199,8 @@ td:last-child {
 #main .button-small,
 #main td:nth-child(6) .button {
   padding: 0;
-  min-width: 0;
-  min-height: 0;
+  min-width: 32px;
+  min-height: 32px;
   line-height: 1;
   font-size: 1.1rem;
 }

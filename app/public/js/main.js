@@ -1,84 +1,104 @@
 $(document).ready(function() {
-  const $table = $("#main");
-  const $tbody = $table.children("tbody");
-  const $filter = $("#filter");
-  const $emptyBtn = $(".tempty");
+  const table = document.getElementById("main");
+  const tbody = table && table.tBodies[0];
+  const filter = document.getElementById("filter");
+  const emptyBtn = document.querySelector(".tempty");
   let showEmpty = false;
 
-  if (!$tbody.length) {
+  if (!tbody) {
     return;
   }
 
-  function query() {
-    return ($filter.val() || "").toLowerCase().trim();
+  const rows = [];
+  const infos = tbody.querySelectorAll("tr.info");
+  for (let i = 0; i < infos.length; i++) {
+    const info = infos[i];
+    const next = info.nextElementSibling;
+    const details = next && next.classList.contains("details") ? next : null;
+    rows.push({
+      info: info,
+      details: details,
+      empty: info.classList.contains("empty"),
+      text: ((info.textContent || "") + "\n" + (details ? details.textContent || "" : "")).toLowerCase()
+    });
   }
 
-  function matches($info, q) {
-    if (!q) {
-      return true;
-    }
-    const $details = $info.next("tr.details");
-    const hay = ($info.text() + "\n" + $details.text()).toLowerCase();
-    return hay.indexOf(q) !== -1;
+  function query() {
+    return ((filter && filter.value) || "").toLowerCase().trim();
   }
 
   function apply() {
     const q = query();
     let vis = 0;
 
-    $tbody.children("tr.info").each(function() {
-      const $info = $(this);
-      const $details = $info.next("tr.details");
-      const empty = $info.hasClass("empty");
-      const show = matches($info, q) && (!empty || showEmpty);
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const hit = !q || row.text.indexOf(q) !== -1;
+      const show = hit && (!row.empty || showEmpty || q.length > 0);
 
-      $info.toggleClass("hidden", !show);
-      if (!show) {
-        $details.addClass("hidden");
+      row.info.classList.toggle("hidden", !show);
+      if (row.details && !show) {
+        row.details.classList.add("hidden");
       }
 
       const alt = show && (vis++ % 2 === 1);
-      $info.toggleClass("alt", alt);
-      $details.toggleClass("alt", alt);
-    });
+      row.info.classList.toggle("alt", alt);
+      if (row.details) {
+        row.details.classList.toggle("alt", alt);
+      }
+    }
 
-    $table.addClass("js-stripes");
-    $emptyBtn.toggleClass("is-on", showEmpty);
-    $emptyBtn.attr("aria-pressed", showEmpty ? "true" : "false");
+    table.classList.add("js-stripes");
+    if (emptyBtn) {
+      emptyBtn.classList.toggle("is-on", showEmpty);
+      emptyBtn.setAttribute("aria-pressed", showEmpty ? "true" : "false");
+    }
   }
 
-  $filter.on("input keyup search", apply);
+  if (filter) {
+    filter.addEventListener("input", apply);
+  }
 
-  $(document).on("click", "button[data-id]", function(event) {
-    const id = event.currentTarget.dataset.id;
+  document.addEventListener("click", function(event) {
+    const btn = event.target.closest && event.target.closest("button[data-id]");
+    if (!btn) {
+      return;
+    }
+    const id = btn.dataset.id;
     if (id === "tempty") {
       showEmpty = !showEmpty;
       apply();
-      event.currentTarget.blur();
+      btn.blur();
       return;
     }
-    const $info = $tbody.children('tr.info[data-id="' + id + '"]');
-    if ($info.hasClass("hidden")) {
+    const info = tbody.querySelector('tr.info[data-id="' + CSS.escape(id) + '"]');
+    if (!info || info.classList.contains("hidden")) {
       return;
     }
-    $info.next("tr.details").toggleClass("hidden");
+    const details = info.nextElementSibling;
+    if (details && details.classList.contains("details")) {
+      details.classList.toggle("hidden");
+    }
   });
 
   const params = new URLSearchParams(window.location.search);
   const single = params.get("single");
   const qParam = params.get("q");
-  if (qParam) {
-    $filter.val(qParam);
+  if (qParam && filter) {
+    filter.value = qParam;
   }
-  if (single) {
-    $filter.val(single);
+  if (single && filter) {
+    filter.value = single;
     showEmpty = true;
   }
 
   apply();
 
   if (single) {
-    $tbody.children('tr.info[data-id="' + single + '"]').next("tr.details").removeClass("hidden");
+    const info = tbody.querySelector('tr.info[data-id="' + CSS.escape(single) + '"]');
+    if (info && info.nextElementSibling) {
+      info.nextElementSibling.classList.remove("hidden");
+    }
   }
 
   document.addEventListener("colorschemechange", apply);
